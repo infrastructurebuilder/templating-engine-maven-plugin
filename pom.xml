@@ -31,7 +31,7 @@
   <url>http://maven.apache.org</url>
   <name>${project.artifactId}</name>
   <properties>
-    <templating.engine.version>0.9.5-SNAPSHOT</templating.engine.version>
+    <templating.engine.version>0.9.5</templating.engine.version>
     <test.coverage.percentage.required>93</test.coverage.percentage.required>
   </properties>
   <scm>
