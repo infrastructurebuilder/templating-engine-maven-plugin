@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>26</version>
+    <version>41</version>
   </parent>
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>templating-engine-maven-plugin</artifactId>
@@ -30,7 +30,7 @@
   <url>http://maven.apache.org</url>
   <name>${project.artifactId}</name>
   <properties>
-    <templating.engine.version>0.9.4-SNAPSHOT</templating.engine.version>
+    <templating.engine.version>0.9.5-SNAPSHOT</templating.engine.version>
     <test.coverage.percentage.required>93</test.coverage.percentage.required>
   </properties>
   <scm>
@@ -86,7 +86,7 @@
     </dependency>
     <dependency>
       <groupId>org.jooq</groupId>
-      <artifactId>joor-java-8</artifactId>
+      <artifactId>joor</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
