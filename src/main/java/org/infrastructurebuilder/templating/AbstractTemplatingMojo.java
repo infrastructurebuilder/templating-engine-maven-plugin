@@ -44,7 +44,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.PropertiesSupplier;
 import org.json.JSONArray;
 
 public abstract class AbstractTemplatingMojo extends AbstractMojo {

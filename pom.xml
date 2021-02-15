@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>41</version>
+    <version>42-SNAPSHOT</version>
   </parent>
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>templating-engine-maven-plugin</artifactId>
@@ -30,7 +30,7 @@
   <url>http://maven.apache.org</url>
   <name>${project.artifactId}</name>
   <properties>
-    <templating.engine.version>0.9.5</templating.engine.version>
+    <templating.engine.version>0.9.6-SNAPSHOT</templating.engine.version>
     <test.coverage.percentage.required>93</test.coverage.percentage.required>
   </properties>
   <scm>
@@ -56,8 +56,8 @@
   </ciManagement>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
