@@ -15,20 +15,19 @@
  */
 package org.infrastructurebuilder.templating;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AbstractTemplatingMojoTest {
   private static WorkingPathSupplier wps;
@@ -36,7 +35,7 @@ public class AbstractTemplatingMojoTest {
   private static Path testClasses;
   private static Path tc;
 
-  @BeforeClass
+  @BeforeAll
   public static void setupClass() {
     wps = new WorkingPathSupplier();
     target = wps.getRoot();
@@ -47,7 +46,7 @@ public class AbstractTemplatingMojoTest {
   private final Map<String, File> array = new HashMap<>();
   private final Map<String, File> appended = new HashMap<>();
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     final Path f1 = tc.resolve("file1.txt");
     final Path a1 = tc.resolve("file2.txt");
