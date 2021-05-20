@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,8 +43,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.PropertiesSupplier;
+import org.infrastructurebuilder.util.core.IBUtils;
 import org.json.JSONArray;
 
 public abstract class AbstractTemplatingMojo extends AbstractMojo {
