@@ -80,6 +80,8 @@ public class TemplatingEngineMojoTest {
   Set<String> sourceExtensions;
   boolean includeDotFiles;
   boolean includeHidden;
+  boolean includeEnvironment = true;
+  boolean includeSystemProperties = true;
   boolean dumpContext;
   MavenProject project;
   Log log;
@@ -154,6 +156,7 @@ public class TemplatingEngineMojoTest {
   public void testLocalExecuteR() throws MojoExecutionException, IOException {
     executionIdentifier = "test1";
     rm = (ResourcesTemplatingEngineMojo) SU(new ResourcesTemplatingEngineMojo(), executionIdentifier);
+
     engine = executionIdentifier;
     appendExecutionIdentifierToOutput = true;
     final Path spr = testClasses.resolve(executionIdentifier);
@@ -279,7 +282,11 @@ public class TemplatingEngineMojoTest {
         .set("fileToPropertiesArrayAppended", fileToPropertiesArrayAppended).set("files", files)
         .set("filesAppendeds", filesAppendeds).set("source", templateSources)
         .set("outputDirectory", sourcesOutputDirectory).set("sourceExtensions", sourceExtensions)
-        .set("includeDotFiles", includeDotFiles).set("includeHidden", includeHidden).set("project", project);
+        .set("includeDotFiles", includeDotFiles).set("includeHidden", includeHidden)
+        .set("includeEnvironment", includeEnvironment).set("includeSystemProperties", includeSystemProperties)
+        .set("project", project);
+
+
     return sm;
   }
 }
