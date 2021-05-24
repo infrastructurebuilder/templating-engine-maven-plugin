@@ -160,6 +160,8 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
       final boolean includeHidden, final boolean includeSystemProperties, final boolean includeSystemEnv,
       final boolean dumpContext, final MavenProject optProject, final Log log, final boolean caseSensitive,
       final List<String> list, final Map<String, MSOSupplier> map) throws MojoExecutionException {
+
+
     TemplatingEngineSupplier comp;
 
     comp = Optional.ofNullable(suppliers.get(engineHint))
@@ -243,6 +245,8 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
         case TEST_RESOURCE:
           optProject.addTestResource(res);
           break;
+        case ITERATIVE_RESOURCE:
+          throw new MojoExecutionException("Cannot process interative resources here");
         }
       }
     } catch (final Exception e) {
@@ -261,7 +265,7 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
   private boolean                               dumpContext;
 
   @Parameter(required = false, defaultValue = "false")
-  private boolean                               skip;
+  protected boolean                               skip;
 
   /**
    * PropertySuppliers are the list that injects which of the
@@ -368,6 +372,9 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
   @Parameter(required = true)
   private String                                engineHint;
 
+  @Parameter(required = false, defaultValue = "true")
+  protected boolean                               useSourceParent = true;
+
   /**
    * This map is automatically populated from the dependency tree via plexus
    */
@@ -377,9 +384,12 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoExecutionException {
     if (!skip) {
+      Path parentPath = getScanningRootSource().toPath();
+      if (useSourceParent)
+        parentPath = parentPath.getParent();
       localExecute(getType(), mojo.getExecutionId(), isAppendExecutionIdentifierToOutput(), getSuppliers(), getEngine(),
           getProperties(), getPropertiesAppended(), getFileToPropertiesArray(), getFileToPropertiesArrayAppended(),
-          getFiles(), getFilesAppendeds(), getScanningRootSource().toPath().getParent(), getScanningRootSource(),
+          getFiles(), getFilesAppendeds(), parentPath, getScanningRootSource(),
           getOutputDirectory().toPath(), getSourceExtensions(), isIncludeDotFiles(), isIncludeHidden(), isDumpContext(),
           isIncludeSystemProperties(), isIncludeEnvironment(), getProject(), getLog(), isCaseSensitive(), getPropertySuppliers(), getPropSuppliers());
     } else {

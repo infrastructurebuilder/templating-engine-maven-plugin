@@ -15,6 +15,30 @@
  */
 package org.infrastructurebuilder.templating;
 
-public enum TemplateType {
-  SOURCE, RESOURCE, TEST_SOURCE, TEST_RESOURCE, ITERATIVE_RESOURCE
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+/**
+ * A Platform layers properties atop each other and extends the target name by the value of the id
+ *
+ * So platform "X" with props "X.properties"
+ * @author mykel
+ *
+ */
+public class Platform {
+  private String id;
+  private List<PlatformInstance> instances = new ArrayList<>();
+
+  public String getId() {
+    return Objects.requireNonNull(id, "id must contain a value");
+  }
+
+  public List<PlatformInstance> getInstances() {
+    return instances;
+  }
+
 }

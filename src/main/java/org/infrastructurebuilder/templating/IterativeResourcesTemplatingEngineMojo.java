@@ -25,21 +25,21 @@ import org.apache.maven.plugins.annotations.Parameter;
  * Generates source code with a TemplatingEngine instace
  *
  */
-@Mojo(name = "generate-resources", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresProject = true)
-public class ResourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
+@Mojo(name = "iterate", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true)
+public class IterativeResourcesTemplatingEngineMojo extends AbstractIterativeTemplatingMojo {
 
   /**
-   * Source folder for templates
+   * By default (and for convenience), we use the location of dependency:unpack-dependencies
    *
    * @required
    */
-  @Parameter(required = true, defaultValue = "${basedir}/src/main/resource-templates/")
+  @Parameter(required = true, defaultValue = "${project.build.directory}/dependency")
   private File source;
   /**
    * Output directory for resources.
    *
    */
-  @Parameter(required = false, defaultValue = "${project.build.directory}/generated-resources/templating-engine")
+  @Parameter(required = false, defaultValue = "${project.build.directory}/generated-resources/iterated-templating-resources")
   private File outputDirectory;
 
   @Override
@@ -54,7 +54,7 @@ public class ResourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
 
   @Override
   public TemplateType getType() {
-    return TemplateType.RESOURCE;
+    return TemplateType.ITERATIVE_RESOURCE;
   }
 
 
