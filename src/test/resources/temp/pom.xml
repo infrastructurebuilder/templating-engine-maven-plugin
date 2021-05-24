@@ -1,0 +1,133 @@
+<!--
+
+    Copyright © 2019 admin (admin@infrastructurebuilder.org)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.infrastructurebuilder</groupId>
+    <artifactId>ibparent</artifactId>
+    <version>52</version>
+  </parent>
+  <groupId>org.infrastructurebuilder.templating</groupId>
+  <artifactId>testme</artifactId>
+  <version>0.9.8-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <properties>
+    <surefire.failIfNoTests>false</surefire.failIfNoTests>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.infrastructurebuilder.templating</groupId>
+        <artifactId>templating-engine-maven-plugin</artifactId>
+        <version>0.9.8-SNAPSHOT</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.infrastructurebuilder.templating</groupId>
+            <artifactId>velocity-templating-engine</artifactId>
+            <version>0.9.6</version>
+          </dependency>
+
+        </dependencies>
+        <configuration>
+          <engineHint>velocity</engineHint>
+          <source>src/main/resources/</source>
+          <useSourceParent>false</useSourceParent>
+        </configuration>
+        <executions>
+          <execution>
+            <id>one</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>iterate</goal>
+            </goals>
+            <inherited>false</inherited>
+            <configuration>
+              <platforms>
+                <platform>
+                  <id>X</id>
+                  <instances>
+                    <instance>
+                      <id>a</id>
+                      <properties>
+                        <one>1</one>
+                      </properties>
+                    </instance>
+                    <instance>
+                      <id>b</id>
+                      <properties>
+                        <one>one</one>
+                      </properties>
+                    </instance>
+                  </instances>
+                </platform>
+                <platform>
+                  <id>Y</id>
+                  <instances>
+                    <instance>
+                      <id>c</id>
+                      <properties>
+                        <one>uno</one>
+                      </properties>
+                    </instance>
+                    <instance>
+                      <id>d</id>
+                      <properties>
+                        <one>ein</one>
+                      </properties>
+                    </instance>
+                  </instances>
+                </platform>
+                <platform>
+                  <id>Z</id>
+                  <instances>
+                    <instance>
+                      <id>q</id>
+                      <properties>
+                        <one>uno</one>
+                      </properties>
+                    </instance>
+                    <instance>
+                      <id>w</id>
+                      <properties>
+                        <one>ein</one>
+                      </properties>
+                    </instance>
+                    <instance>
+                      <id>m</id>
+                      <properties>
+                        <one>ONE</one>
+                      </properties>
+                    </instance>
+                  </instances>
+                </platform>
+              </platforms>
+            </configuration>
+          </execution>
+          <execution>
+            <id>package-iterations</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

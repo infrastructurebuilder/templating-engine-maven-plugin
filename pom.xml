@@ -16,7 +16,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
@@ -30,8 +31,9 @@
   <url>http://maven.apache.org</url>
   <name>${project.artifactId}</name>
   <properties>
-    <templating.engine.version>0.9.6</templating.engine.version>
-    <test.coverage.percentage.required>93</test.coverage.percentage.required>
+    <templating.engine.version>0.9.7</templating.engine.version>
+    <test.coverage.percentage.required>1</test.coverage.percentage.required>
+    <jacoco.max.missed.classes>55</jacoco.max.missed.classes>
   </properties>
   <scm>
     <connection>scm:git:${git.url}</connection>
@@ -89,6 +91,16 @@
       <artifactId>joor</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-archiver</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <version>${maven.assembly.plugin.version}</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating;
+package org.infrastructurebuilder.templating.maven;
 
 import static java.util.Objects.requireNonNull;
 import static org.infrastructurebuilder.templating.TemplatingEngine.EXECUTION_IDENTIFIER;
@@ -43,6 +43,11 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.infrastructurebuilder.templating.AbstractMavenBackedPropertiesSupplier;
+import org.infrastructurebuilder.templating.MSOSupplier;
+import org.infrastructurebuilder.templating.TemplatingEngine;
+import org.infrastructurebuilder.templating.TemplatingEngineException;
+import org.infrastructurebuilder.templating.TemplatingEngineSupplier;
 import org.infrastructurebuilder.util.core.IBUtils;
 import org.json.JSONArray;
 
@@ -160,6 +165,8 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
       final boolean includeHidden, final boolean includeSystemProperties, final boolean includeSystemEnv,
       final boolean dumpContext, final MavenProject optProject, final Log log, final boolean caseSensitive,
       final List<String> list, final Map<String, MSOSupplier> map) throws MojoExecutionException {
+
+
     TemplatingEngineSupplier comp;
 
     comp = Optional.ofNullable(suppliers.get(engineHint))
@@ -243,6 +250,8 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
         case TEST_RESOURCE:
           optProject.addTestResource(res);
           break;
+        case ITERATIVE_RESOURCE:
+          throw new MojoExecutionException("Cannot process interative resources here");
         }
       }
     } catch (final Exception e) {
@@ -261,7 +270,7 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
   private boolean                               dumpContext;
 
   @Parameter(required = false, defaultValue = "false")
-  private boolean                               skip;
+  protected boolean                               skip;
 
   /**
    * PropertySuppliers are the list that injects which of the
@@ -368,6 +377,9 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
   @Parameter(required = true)
   private String                                engineHint;
 
+  @Parameter(required = false, defaultValue = "true")
+  protected boolean                               useSourceParent = true;
+
   /**
    * This map is automatically populated from the dependency tree via plexus
    */
@@ -377,9 +389,12 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoExecutionException {
     if (!skip) {
+      Path parentPath = getScanningRootSource().toPath();
+      if (useSourceParent)
+        parentPath = parentPath.getParent();
       localExecute(getType(), mojo.getExecutionId(), isAppendExecutionIdentifierToOutput(), getSuppliers(), getEngine(),
           getProperties(), getPropertiesAppended(), getFileToPropertiesArray(), getFileToPropertiesArrayAppended(),
-          getFiles(), getFilesAppendeds(), getScanningRootSource().toPath().getParent(), getScanningRootSource(),
+          getFiles(), getFilesAppendeds(), parentPath, getScanningRootSource(),
           getOutputDirectory().toPath(), getSourceExtensions(), isIncludeDotFiles(), isIncludeHidden(), isDumpContext(),
           isIncludeSystemProperties(), isIncludeEnvironment(), getProject(), getLog(), isCaseSensitive(), getPropertySuppliers(), getPropSuppliers());
     } else {

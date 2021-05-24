@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating;
+package org.infrastructurebuilder.templating.maven;
 
 import java.io.File;
 
@@ -21,20 +21,25 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-@Mojo(name = "test-sources", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresProject = true)
-public class TestsTemplatingEngineMojo extends AbstractTemplatingMojo {
+/**
+ * Generates source code with a TemplatingEngine instace
+ *
+ */
+@Mojo(name = "generate-resources", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresProject = true)
+public class ResourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
 
   /**
-   * Source folder for velocity test templates
+   * Source folder for templates
    *
+   * @required
    */
-  @Parameter(required = true, defaultValue = "${basedir}/src/test/templates/")
+  @Parameter(required = true, defaultValue = "${basedir}/src/main/resource-templates/")
   private File source;
   /**
-   * Output directory for generated test sources.
+   * Output directory for resources.
    *
    */
-  @Parameter(required = false, defaultValue = "${project.build.directory}/generated-test-sources")
+  @Parameter(required = false, defaultValue = "${project.build.directory}/generated-resources/templating-engine")
   private File outputDirectory;
 
   @Override
@@ -49,7 +54,8 @@ public class TestsTemplatingEngineMojo extends AbstractTemplatingMojo {
 
   @Override
   public TemplateType getType() {
-    return TemplateType.TEST_SOURCE;
+    return TemplateType.RESOURCE;
   }
+
 
 }
