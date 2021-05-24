@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating;
+package org.infrastructurebuilder.templating.maven;
 
 import static java.util.stream.Collectors.toList;
 
@@ -25,9 +25,12 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.infrastructurebuilder.templating.internal.InternalPlatform;
+import org.infrastructurebuilder.templating.MSOSupplier;
+import org.infrastructurebuilder.templating.TemplatingEngineException;
+import org.infrastructurebuilder.templating.maven.internal.InternalPlatform;
 
 public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplatingMojo {
+  public static final String ITERATED_RESOURCES = "ITERATED_RESOURCES";
   /**
    * ORDERED List of sub-platform types for platform-array-generation
    * Each sub platform will generated a pathed output from the root and all previous sub platforms
@@ -40,11 +43,15 @@ public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplating
   public void execute() throws MojoExecutionException {
 
     if (!skip) {
+      @SuppressWarnings("rawtypes")
+      Map pc = getPluginContext();
+      List<InternalPlatform> oldResources = (List<InternalPlatform>) pc.getOrDefault(ITERATED_RESOURCES,new ArrayList<>());
       if (platforms.size() < 1)
         throw new MojoExecutionException("At least one <platform> must be specified");
       List<InternalPlatform> ipl  = new ArrayList<>();
       Platform               root = platforms.get(0);
-      List<InternalPlatform> l2 = root.getInstances().stream().map(pi -> new InternalPlatform(root).extend(pi)).collect(toList());
+      List<InternalPlatform> l2   = root.getInstances().stream().map(pi -> new InternalPlatform(root).extend(pi))
+          .collect(toList());
       ipl.addAll(
 
           l2);
@@ -75,10 +82,10 @@ public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplating
       }
 
       for (int i = 0; i < ipl.size(); ++i) {
-        InternalPlatform iplItem = ipl.get(i);
+        InternalPlatform         iplItem = ipl.get(i);
 
-        Path                     v = iplItem.getExtendedPath(getOutputDirectory().toPath());
-        Map<String, MSOSupplier> p = new HashMap<>();
+        Path                     v       = iplItem.getExtendedPath(getOutputDirectory().toPath());
+        Map<String, MSOSupplier> p       = new HashMap<>();
 
         p.putAll(getPropSuppliers());
         p.put(iplItem.toString(), iplItem);
@@ -93,12 +100,13 @@ public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplating
             getFileToPropertiesArrayAppended(), getFiles(), getFilesAppendeds(), parentPath, getScanningRootSource(), v,
             getSourceExtensions(), isIncludeDotFiles(), isIncludeHidden(), isDumpContext(), isIncludeSystemProperties(),
             isIncludeEnvironment(), getProject(), getLog(), isCaseSensitive(), list, p);
+        iplItem.setFinalDestination(v);
+        oldResources.add(iplItem);
       }
-      ;
+      pc.put(ITERATED_RESOURCES, oldResources);
+      setPluginContext(pc);
 
-    } else
-
-    {
+    } else {
       getLog().info("Skipping templating for " + mojo.getExecutionId());
     }
   }

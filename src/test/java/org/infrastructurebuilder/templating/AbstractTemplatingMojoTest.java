@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.infrastructurebuilder.templating.maven.AbstractTemplatingMojo;
 import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 import org.junit.Before;
 import org.junit.BeforeClass;

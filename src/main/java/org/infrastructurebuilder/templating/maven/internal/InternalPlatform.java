@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating.internal;
+package org.infrastructurebuilder.templating.maven.internal;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -21,17 +21,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 
-import org.infrastructurebuilder.templating.AbstractTemplatingMojo;
 import org.infrastructurebuilder.templating.MSOSupplier;
-import org.infrastructurebuilder.templating.Platform;
-import org.infrastructurebuilder.templating.PlatformInstance;
+import org.infrastructurebuilder.templating.maven.AbstractTemplatingMojo;
+import org.infrastructurebuilder.templating.maven.Platform;
+import org.infrastructurebuilder.templating.maven.PlatformInstance;
 
 public class InternalPlatform implements MSOSupplier {
   private List<String>     paths = new ArrayList<>();
   private List<Properties> tp    = new ArrayList<>();
   private Platform         root;
+  private Path             finalDestination;
 
   public InternalPlatform(Platform root) {
     this.root = Objects.requireNonNull(root);
@@ -50,13 +52,17 @@ public class InternalPlatform implements MSOSupplier {
     return i;
   }
 
-  public String getRoot() {
+  public String getPathIdString() {
+    return String.join("-", paths);
+  }
+
+  public String getPaths() {
     return String.join(FileSystems.getDefault().getSeparator(), paths);
   }
 
   public Path getExtendedPath(Path root) {
     Path c = Objects.requireNonNull(root);
-    for (int i= 0; i < paths.size(); ++i)
+    for (int i = 0; i < paths.size(); ++i)
       c = c.resolve(paths.get(i));
     return c;
   }
@@ -73,7 +79,7 @@ public class InternalPlatform implements MSOSupplier {
 
   @Override
   public String toString() {
-    return "InternalPlatform [paths=" + getRoot() + ", tp=" + getProperties() + ", root=" + root.getId() + "]";
+    return "InternalPlatform [paths=" + getPaths() + ", tp=" + getProperties() + ", root=" + root.getId() + "]";
   }
 
   @Override
@@ -81,4 +87,11 @@ public class InternalPlatform implements MSOSupplier {
     return AbstractTemplatingMojo.toMSO.apply(getProperties());
   }
 
+  public void setFinalDestination(Path finalDestination) {
+    this.finalDestination = Objects.requireNonNull(finalDestination).toAbsolutePath();
+  }
+
+  public Optional<Path> getFinalDestination() {
+    return Optional.ofNullable(this.finalDestination);
+  }
 }

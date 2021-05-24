@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating;
+package org.infrastructurebuilder.templating.maven;
 
 public enum TemplateType {
   SOURCE, RESOURCE, TEST_SOURCE, TEST_RESOURCE, ITERATIVE_RESOURCE

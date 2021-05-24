@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating;
+package org.infrastructurebuilder.templating.maven;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * A Platform layers properties atop each other and extends the target name by the value of the id
@@ -40,5 +37,15 @@ public class Platform {
   public List<PlatformInstance> getInstances() {
     return instances;
   }
+
+  public void addInstance(PlatformInstance i) {
+    this.instances.add(i);
+    i.setPlatform(this);
+  }
+
+  public void setInstances(List<PlatformInstance> instances) {
+    instances.forEach(this::addInstance);
+  }
+
 
 }

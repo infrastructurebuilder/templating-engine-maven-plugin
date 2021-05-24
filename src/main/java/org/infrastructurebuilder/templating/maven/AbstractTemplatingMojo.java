@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating;
+package org.infrastructurebuilder.templating.maven;
 
 import static java.util.Objects.requireNonNull;
 import static org.infrastructurebuilder.templating.TemplatingEngine.EXECUTION_IDENTIFIER;
@@ -43,6 +43,11 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.infrastructurebuilder.templating.AbstractMavenBackedPropertiesSupplier;
+import org.infrastructurebuilder.templating.MSOSupplier;
+import org.infrastructurebuilder.templating.TemplatingEngine;
+import org.infrastructurebuilder.templating.TemplatingEngineException;
+import org.infrastructurebuilder.templating.TemplatingEngineSupplier;
 import org.infrastructurebuilder.util.core.IBUtils;
 import org.json.JSONArray;
 

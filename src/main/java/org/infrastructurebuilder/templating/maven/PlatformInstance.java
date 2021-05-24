@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating;
+package org.infrastructurebuilder.templating.maven;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,12 +22,15 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.infrastructurebuilder.templating.TemplatingEngineException;
+
 public class PlatformInstance {
   private static final String ERR_STR = "Only one of <properties> or <path> is allowed";
 
   private String              id;
   private String              path;
   private Properties          properties;
+  private Platform            platform;
 
   public void setPath(String path) {
     if (properties != null)
@@ -62,5 +65,13 @@ public class PlatformInstance {
     }
     return properties;
 
+  }
+
+  public void setPlatform(Platform platform) {
+    this.platform = platform;
+  }
+
+  public Platform getPlatform() {
+    return platform;
   }
 }

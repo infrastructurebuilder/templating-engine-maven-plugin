@@ -26,8 +26,9 @@
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>testme</artifactId>
   <version>0.9.8-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <properties>
-  <surefire.failIfNoTests>false</surefire.failIfNoTests>
+    <surefire.failIfNoTests>false</surefire.failIfNoTests>
   </properties>
   <build>
     <plugins>
@@ -117,6 +118,13 @@
                 </platform>
               </platforms>
             </configuration>
+          </execution>
+          <execution>
+            <id>package-iterations</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
