@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -101,6 +102,9 @@ abstract public class AbstractIterativeTemplatingPackagingMojo extends AbstractM
 
   @Parameter(required = true, defaultValue = "${basedir}/src/main/resources")
   private File                      unfilteredResourceDirectory;
+
+  @Parameter(required = false)
+  private List<ClassifierNameMapper> idMappers = new ArrayList<>();
 
   @Parameter(defaultValue = "${project.build.directory}/templating-tmp", readonly = true, required = true)
   private File                      workDirectory;
@@ -319,7 +323,7 @@ abstract public class AbstractIterativeTemplatingPackagingMojo extends AbstractM
     return project;
   }
 
-  File createArchive(Path contentDirectory, String classifier) throws MojoExecutionException {
+  public File createArchive(Path contentDirectory, String classifier) throws MojoExecutionException {
 
     try {
       Archiver   archiver = archiverManager.getArchiver("jar");
@@ -354,4 +358,11 @@ abstract public class AbstractIterativeTemplatingPackagingMojo extends AbstractM
     getPluginContext().put(COMPILE_ORDER, order);
   }
 
+  public void setIdMappers(List<ClassifierNameMapper> idMappers) {
+    this.idMappers = idMappers;
+  }
+
+  public List<ClassifierNameMapper> getIdMappers() {
+    return idMappers;
+  }
 }

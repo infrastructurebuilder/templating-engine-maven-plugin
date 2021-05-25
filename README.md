@@ -2,7 +2,7 @@
 
 A plugin that processes files using a templating engine from `templating-engine-root`.
 
-Usurped in part from [the original project](https://github.com/nativelibs4java/maven-velocity-plugin) 
+Usurped in part from [the original project](https://github.com/nativelibs4java/maven-velocity-plugin)
 Modified to conform to our release standards
 
 ## Usage

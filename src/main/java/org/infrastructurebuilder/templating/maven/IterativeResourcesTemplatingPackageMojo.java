@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,7 +47,10 @@ public final class IterativeResourcesTemplatingPackageMojo extends AbstractItera
       // Build an archive for each InternalPlatform
       getLog().info("Creating archive for " + ip);
       Path   contentDir = ip.getFinalDestination().orElseThrow();
-      String classifier = ip.getPathIdString();
+      String classifier = getIdMappers().stream().filter(im -> im.matches(ip.getPathIdString())).findFirst()
+          .flatMap(q -> q.map(ip.getPathIdString())).orElse(ip.getPathIdString());
+      getLog().info("Classifier set " + ip.getPathIdString() + " -> " + classifier);
+
       et.withTranslation(() -> {
         try {
           final File a = createArchive(contentDir, classifier);
