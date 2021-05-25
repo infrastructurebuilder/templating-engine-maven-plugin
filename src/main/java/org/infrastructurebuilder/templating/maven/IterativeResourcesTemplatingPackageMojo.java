@@ -47,9 +47,9 @@ public final class IterativeResourcesTemplatingPackageMojo extends AbstractItera
       // Build an archive for each InternalPlatform
       getLog().info("Creating archive for " + ip);
       Path   contentDir = ip.getFinalDestination().orElseThrow();
-      String classifier = getIdMappers().stream().filter(im -> im.matches(ip.getPathIdString())).findFirst()
-          .flatMap(q -> q.map(ip.getPathIdString())).orElse(ip.getPathIdString());
-      getLog().info("Classifier set " + ip.getPathIdString() + " -> " + classifier);
+      String classifier = getIdMappers().stream().filter(im -> im.matches(ip.getIdsJoinedDashString())).findFirst()
+          .flatMap(q -> q.map(ip.getIdsJoinedDashString())).orElse(ip.getIdsJoinedDashString());
+      getLog().info("Classifier set " + ip.getIdsJoinedDashString() + " -> " + classifier);
 
       et.withTranslation(() -> {
         try {
