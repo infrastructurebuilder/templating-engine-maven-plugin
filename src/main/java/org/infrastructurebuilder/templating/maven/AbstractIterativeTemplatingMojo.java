@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -39,6 +41,15 @@ public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplating
   @Parameter(required = true, defaultValue = "")
   private List<Platform> platforms = new ArrayList<>();
 
+  @Parameter(required = false, defaultValue = "true")
+  private boolean addIdentifiers;
+
+  /**
+   * finalOverrides are applied LAST.  If anything needs to be over-ridden, this is the place to do it
+   */
+  @Parameter(required = false)
+  private Properties finalOverrides = new Properties();
+
   @Override
   public void execute() throws MojoExecutionException {
 
@@ -52,9 +63,7 @@ public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplating
       Platform               root = platforms.get(0);
       List<InternalPlatform> l2   = root.getInstances().stream().map(pi -> new InternalPlatform(root).extend(pi))
           .collect(toList());
-      ipl.addAll(
-
-          l2);
+      ipl.addAll(l2);
       List<Platform> plist = new ArrayList<>();
       plist.addAll(platforms.subList(1, platforms.size()));
       while (plist.size() > 0) {
@@ -81,6 +90,7 @@ public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplating
         throw new TemplatingEngineException("Template type not accepted");
       }
 
+      String finalPropertiesId = UUID.randomUUID().toString();
       for (int i = 0; i < ipl.size(); ++i) {
         InternalPlatform         iplItem = ipl.get(i);
 
@@ -88,9 +98,11 @@ public abstract class AbstractIterativeTemplatingMojo extends AbstractTemplating
         Map<String, MSOSupplier> p       = new HashMap<>();
 
         p.putAll(getPropSuppliers());
-        p.put(iplItem.toString(), iplItem);
         List<String> list = new ArrayList<>(getPropertySuppliers());
         list.add(iplItem.toString());
+        p.put(iplItem.toString(), iplItem.getMSO(addIdentifiers));
+        list.add(finalPropertiesId);
+        p.put(finalPropertiesId, () -> AbstractTemplatingMojo.toMSO.apply(finalOverrides));
 
         Path parentPath = getScanningRootSource().toPath();
         if (useSourceParent)

@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.templating.maven;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,12 +27,19 @@ import java.util.Properties;
 import org.infrastructurebuilder.templating.TemplatingEngineException;
 
 public class PlatformInstance {
-  private static final String ERR_STR = "Only one of <properties> or <path> is allowed";
+  public static final String  NON_NULL = " cannot be null";
+
+  private static final String ERR_STR  = "Only one of <properties> or <path> is allowed";
 
   private String              id;
+  private String              dirName;
   private String              path;
   private Properties          properties;
   private Platform            platform;
+
+  public String getDirName() {
+    return dirName == null ? getId() : requireNonNull(dirName, "dirName" + NON_NULL);
+  }
 
   public void setPath(String path) {
     if (properties != null)
@@ -45,7 +54,7 @@ public class PlatformInstance {
   }
 
   public String getId() {
-    return id;
+    return requireNonNull(id, "id" + NON_NULL);
   }
 
   public Optional<Path> getPath() {

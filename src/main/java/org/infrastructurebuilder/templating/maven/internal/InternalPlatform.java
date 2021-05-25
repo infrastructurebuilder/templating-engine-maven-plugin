@@ -15,12 +15,14 @@
  */
 package org.infrastructurebuilder.templating.maven.internal;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -29,17 +31,21 @@ import org.infrastructurebuilder.templating.maven.AbstractTemplatingMojo;
 import org.infrastructurebuilder.templating.maven.Platform;
 import org.infrastructurebuilder.templating.maven.PlatformInstance;
 
-public class InternalPlatform implements MSOSupplier {
-  private List<String>     paths = new ArrayList<>();
-  private List<Properties> tp    = new ArrayList<>();
-  private Platform         root;
-  private Path             finalDestination;
+public class InternalPlatform {
+  private List<String>           ids       = new ArrayList<>();
+  private List<String>           paths     = new ArrayList<>();
+  private List<Properties>       tp        = new ArrayList<>();
+  private List<PlatformInstance> instances = new ArrayList<>();
+  private Platform               root;
+  private Path                   finalDestination;
 
   public InternalPlatform(Platform root) {
-    this.root = Objects.requireNonNull(root);
+    this.root = requireNonNull(root);
   }
 
   private InternalPlatform(InternalPlatform i) {
+    this.instances.addAll(i.instances);
+    this.ids.addAll(i.ids);
     this.paths.addAll(i.paths);
     this.tp.addAll(i.tp);
     this.root = i.root;
@@ -47,13 +53,31 @@ public class InternalPlatform implements MSOSupplier {
 
   public InternalPlatform extend(PlatformInstance pi) {
     InternalPlatform i = copy();
-    i.paths.add(Objects.requireNonNull(pi.getId()));
-    i.tp.add(Objects.requireNonNull(pi.getProperties()));
+    i.ids.add(requireNonNull(pi, "Platform Instance" + PlatformInstance.NON_NULL).getId());
+    i.paths.add(pi.getDirName());
+    i.tp.add(pi.getProperties());
+    i.instances.add(pi);
     return i;
   }
 
-  public String getPathIdString() {
+  public String getIdsJoinedDashString() {
+    return String.join("-", ids);
+  }
+
+  public String getIdsJoinedDotString() {
+    return String.join(".", ids);
+  }
+
+  public String getPathJoinedDashString() {
     return String.join("-", paths);
+  }
+
+  public String getPathJoinedDotString() {
+    return String.join(".", paths);
+  }
+
+  public String getInstancePlatformIdsJoinedDot() {
+    return this.instances.stream().map(PlatformInstance::getPlatform).map(Platform::getId).collect(joining("."));
   }
 
   public String getPaths() {
@@ -61,7 +85,7 @@ public class InternalPlatform implements MSOSupplier {
   }
 
   public Path getExtendedPath(Path root) {
-    Path c = Objects.requireNonNull(root);
+    Path c = requireNonNull(root);
     for (int i = 0; i < paths.size(); ++i)
       c = c.resolve(paths.get(i));
     return c;
@@ -82,13 +106,21 @@ public class InternalPlatform implements MSOSupplier {
     return "InternalPlatform [paths=" + getPaths() + ", tp=" + getProperties() + ", root=" + root.getId() + "]";
   }
 
-  @Override
-  public Map<String, Object> get() {
-    return AbstractTemplatingMojo.toMSO.apply(getProperties());
+  public MSOSupplier getMSO(boolean addProperties) {
+    Properties p = getProperties();
+    if (addProperties) {
+      p.setProperty("ids_joined_dash", getIdsJoinedDashString());
+      p.setProperty("ids_joined_dot", getIdsJoinedDotString());
+      p.setProperty("path_joined_dash", getPathJoinedDashString());
+      p.setProperty("path_joined_dot", getPathJoinedDotString());
+      p.setProperty("paths_joined_sep", getPaths());
+      p.setProperty("final_destination", getFinalDestination().map(Path::toString).orElse(":unknown:"));
+    }
+    return () -> AbstractTemplatingMojo.toMSO.apply(getProperties());
   }
 
   public void setFinalDestination(Path finalDestination) {
-    this.finalDestination = Objects.requireNonNull(finalDestination).toAbsolutePath();
+    this.finalDestination = requireNonNull(finalDestination).toAbsolutePath();
   }
 
   public Optional<Path> getFinalDestination() {
