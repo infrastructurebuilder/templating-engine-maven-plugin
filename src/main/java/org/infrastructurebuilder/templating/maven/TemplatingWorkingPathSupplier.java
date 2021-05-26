@@ -18,12 +18,14 @@ package org.infrastructurebuilder.templating.maven;
 import java.nio.file.Path;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.infrastructurebuilder.util.core.PathSupplier;
 import org.infrastructurebuilder.util.core.TSupplier;
 
-@javax.inject.Named(TemplatingWorkingPathSupplier.TEMPLATING_WORKING_PATH)
-@javax.inject.Singleton
+@Named(TemplatingWorkingPathSupplier.TEMPLATING_WORKING_PATH)
+@Singleton
 public class TemplatingWorkingPathSupplier extends TSupplier<Path> implements PathSupplier {
   static final String TEMPLATING_WORKING_PATH = "templating-working-path";
 

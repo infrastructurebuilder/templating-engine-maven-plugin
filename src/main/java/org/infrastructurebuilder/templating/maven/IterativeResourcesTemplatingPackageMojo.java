@@ -19,14 +19,13 @@ import static org.apache.maven.plugins.annotations.InstantiationStrategy.PER_LOO
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 import static org.infrastructurebuilder.templating.TemplatingEngineException.et;
-import static org.infrastructurebuilder.templating.maven.AbstractIterativeTemplatingMojo.ITERATED_RESOURCES;
+import static org.infrastructurebuilder.templating.maven.IterativeResourcesTemplatingEngineMojo.ITERATED_RESOURCES;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -55,7 +54,7 @@ public final class IterativeResourcesTemplatingPackageMojo extends AbstractItera
         try {
           final File a = createArchive(contentDir, classifier);
           getLog().info(String.format("Classifier set: %s", classifier));
-          getMavenProjectHelper().attachArtifact(getProject(), "jar", classifier, a);
+          mavenProjectHelper.attachArtifact(project, "jar", classifier, a);
         } catch (final Throwable e) {
           getLog().error("Failed to create archive", e);
           throw new TemplatingEngineException("Failed to create archive!", e);

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.infrastructurebuilder.templating.maven.AbstractTemplatingMojo;
+import org.infrastructurebuilder.templating.maven.internal.TemplatingUtils;
 import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -60,7 +61,7 @@ public class AbstractTemplatingMojoTest {
   public void testFailGenerateFileToPropertiesArray() throws MojoExecutionException {
     final File f4 = tc.resolve("file5.properties").toFile();
     appended.put("3", f4);
-    Map<String, Object>  b = AbstractTemplatingMojo.generateFileToPropertiesArray(array, appended);
+    Map<String, Object>  b = TemplatingUtils.generateFileToPropertiesArray(array, appended);
     assertEquals(b.size(), 2);
   }
 
@@ -68,13 +69,13 @@ public class AbstractTemplatingMojoTest {
   public void testFailGetFilesProperties() throws TemplatingEngineException {
     final File f3 = tc.resolve("file3.properties").toFile();
     final File f4 = tc.resolve("file5.properties").toFile();
-    final Map<String, Object> kk = AbstractTemplatingMojo.getFilesProperties(Arrays.asList(f3), Arrays.asList(f4));
+    final Map<String, Object> kk = TemplatingUtils.getFilesProperties(Arrays.asList(f3), Arrays.asList(f4));
     assertEquals(2, kk.size());
   }
 
   @Test
   public void testGenerateFileToPropertiesArray() throws MojoExecutionException {
-    final Map<String, Object> b = AbstractTemplatingMojo.generateFileToPropertiesArray(array, appended);
+    final Map<String, Object> b = TemplatingUtils.generateFileToPropertiesArray(array, appended);
     assertEquals(b.size(), 2);
   }
 
@@ -82,7 +83,7 @@ public class AbstractTemplatingMojoTest {
   public void testGetFilesProperties() throws MojoExecutionException, TemplatingEngineException {
     final File f3 = tc.resolve("file3.properties").toFile();
     final File f4 = tc.resolve("file4.properties").toFile();
-    final Map<String, Object> kk = AbstractTemplatingMojo.getFilesProperties(Arrays.asList(f3), Arrays.asList(f4));
+    final Map<String, Object> kk = TemplatingUtils.getFilesProperties(Arrays.asList(f3), Arrays.asList(f4));
     assertEquals(3, kk.size());
   }
 
