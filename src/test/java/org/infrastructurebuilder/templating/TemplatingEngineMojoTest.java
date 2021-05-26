@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.templating;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,71 +35,73 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.infrastructurebuilder.templating.maven.AbstractTemplatingMojo;
 import org.infrastructurebuilder.templating.maven.ResourcesTemplatingEngineMojo;
 import org.infrastructurebuilder.templating.maven.SourcesTemplatingEngineMojo;
 import org.infrastructurebuilder.templating.maven.TestResourcesTemplatingEngineMojo;
 import org.infrastructurebuilder.templating.maven.TestsTemplatingEngineMojo;
+import org.infrastructurebuilder.templating.maven.internal.TemplatingComponent;
 import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 import org.joor.Reflect;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TemplatingEngineMojoTest {
 
   private static WorkingPathSupplier wps;
-  private static Path target;
-  private static Path testClasses;
+  private static Path                target;
+  private static Path                testClasses;
 
-  @BeforeClass
+  @BeforeAll
   public static void setupClass() {
     wps = new WorkingPathSupplier();
     target = wps.getRoot();
     testClasses = target.resolve("test-classes");
   }
 
-  @AfterClass
+  @AfterAll
   public static void tearDownClass() {
     wps.finalize();
   }
 
-  Path path;
-  Path baseDir;
-  String executionIdentifier;
-  boolean appendExecutionIdentifierToOutput;
-  Map<String, TemplatingEngineSupplier> suppliers;
-  String engine;
-  Map<String, String> properties;
-  Map<String, String> propertiesAppended;
-  Map<String, File> fileToPropertiesArray;
-  Map<String, File> fileToPropertiesArrayAppended;
-  List<File> files;
-  List<File> filesAppendeds;
-  File templateSources;
-  File templateTestSources;
-  File sourcesOutputDirectory;
-  File testSourcesOutputDirectory;
-  File resourcesOutputDirectory;
-  File testResourcesOutputDirectory;
-  Set<String> sourceExtensions;
-  boolean includeDotFiles;
-  boolean includeHidden;
-  boolean includeEnvironment = true;
-  boolean includeSystemProperties = true;
-  boolean dumpContext;
-  MavenProject project;
-  Log log;
-  SourcesTemplatingEngineMojo sm;
-  private TestsTemplatingEngineMojo tm;
-  private ResourcesTemplatingEngineMojo rm;
+  Path                                      path;
+  Path                                      baseDir;
+  String                                    executionIdentifier;
+  boolean                                   appendExecutionIdentifierToOutput;
+  Map<String, TemplatingEngineSupplier>     suppliers;
+  String                                    engine;
+  Map<String, String>                       properties;
+  Map<String, String>                       propertiesAppended;
+  Map<String, File>                         fileToPropertiesArray;
+  Map<String, File>                         fileToPropertiesArrayAppended;
+  List<File>                                files;
+  List<File>                                filesAppendeds;
+  File                                      templateSources;
+  File                                      templateTestSources;
+  File                                      sourcesOutputDirectory;
+  File                                      testSourcesOutputDirectory;
+  File                                      resourcesOutputDirectory;
+  File                                      testResourcesOutputDirectory;
+  Set<String>                               sourceExtensions;
+  boolean                                   includeDotFiles;
+  boolean                                   includeHidden;
+  boolean                                   includeEnvironment      = true;
+  boolean                                   includeSystemProperties = true;
+  boolean                                   dumpContext;
+  MavenProject                              project;
+  Log                                       log;
+  SourcesTemplatingEngineMojo               sm;
+  private TestsTemplatingEngineMojo         tm;
+  private ResourcesTemplatingEngineMojo     rm;
   private TestResourcesTemplatingEngineMojo tr;
-  private Map<String, MSOSupplier> map;
-  private List<String> ss;
+  private Map<String, MSOSupplier>          map;
+  private List<String>                      ss;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     map = new HashMap<>();
     ss = Arrays.asList("X");
@@ -114,9 +118,10 @@ public class TemplatingEngineMojoTest {
     fileToPropertiesArrayAppended = new HashMap<>();
     files = new ArrayList<>();
     filesAppendeds = new ArrayList<>();
+    sourceExtensions = Set.of("java", "abcs");
     final Path gensources = path.resolve("generated-sources");
 
-    final Path sgen = gensources.resolve("main");
+    final Path sgen       = gensources.resolve("main");
     Files.createDirectories(sgen);
     sourcesOutputDirectory = sgen.toFile();
     final Path tgen = gensources.resolve("test");
@@ -134,10 +139,11 @@ public class TemplatingEngineMojoTest {
     suppliers.put("test2", new DummyTemplatingEngineSupplier());
     suppliers.put("throw", new ThrowingDummySupplier());
 
-    //    rm = (ResourcesTemplatingEngineMojo) SU(new ResourcesTemplatingEngineMojo());
-    //    tr = (TestResourcesTemplatingEngineMojo) SU(new TestResourcesTemplatingEngineMojo());
-    //    sm = (SourcesTemplatingEngineMojo) SU(new SourcesTemplatingEngineMojo());
-    //    tm = (TestsTemplatingEngineMojo) SU(new TestsTemplatingEngineMojo());
+    // rm = (ResourcesTemplatingEngineMojo) SU(new ResourcesTemplatingEngineMojo());
+    // tr = (TestResourcesTemplatingEngineMojo) SU(new
+    // TestResourcesTemplatingEngineMojo());
+    // sm = (SourcesTemplatingEngineMojo) SU(new SourcesTemplatingEngineMojo());
+    // tm = (TestsTemplatingEngineMojo) SU(new TestsTemplatingEngineMojo());
   }
 
   @Test
@@ -150,9 +156,12 @@ public class TemplatingEngineMojoTest {
     Files.createDirectories(spr);
     templateSources = spr.resolve("src").resolve("main").resolve("templates").toFile();
     templateTestSources = spr.resolve("src").resolve("test").resolve("templates").toFile();
-    Reflect.on(sm).set("appendExecutionIdentifierToOutput", true).set("engineHint", engine)
-        .set("source", templateSources).set("dumpContext", false).set("propertySuppliers", ss)
-        .set("propSuppliers", map);
+    sm.appendExecutionIdentifierToOutput = true;
+    sm.engineHint = engine;
+    sm.source = templateSources;
+    sm.dumpContext = false;
+    sm.propertySuppliers.addAll(ss);
+    sm.propertySuppliersMap.putAll(map);
 
     sm.execute();
   }
@@ -204,7 +213,7 @@ public class TemplatingEngineMojoTest {
     tr.execute();
   }
 
-  @Test //(expected = MojoExecutionException.class)
+  @Test // (expected = MojoExecutionException.class)
   public void testLocalExecuteWFileFail() throws MojoExecutionException, IOException {
     executionIdentifier = "test1";
     sm = (SourcesTemplatingEngineMojo) SU(new SourcesTemplatingEngineMojo(), executionIdentifier);
@@ -217,8 +226,12 @@ public class TemplatingEngineMojoTest {
     final Map<String, File> fake = new HashMap<>();
     fake.put("someFake", new File(UUID.randomUUID().toString()));
     final List<File> fakeFiles = Arrays.asList(new File(UUID.randomUUID().toString()));
-    Reflect.on(sm).set("files", fakeFiles).set("appendExecutionIdentifierToOutput", false).set("engineHint", engine)
-        .set("source", templateSources).set("dumpContext", true).set("fileToPropertiesArrayAppended", fake);
+    sm.files.addAll(fakeFiles);
+    sm.appendExecutionIdentifierToOutput = false;
+    sm.engineHint = engine;
+    sm.source = templateSources;
+    sm.dumpContext = true;
+    sm.fileToPropertiesArrayAppended.putAll(fake);
     sm.execute();
     // TODO Assert Something?
   }
@@ -239,7 +252,7 @@ public class TemplatingEngineMojoTest {
 
   }
 
-  @Test(expected = MojoExecutionException.class)
+  @Test
   public void testLocalExecuteWThrowingExecution() throws MojoExecutionException, IOException {
     executionIdentifier = "test1";
     sm = (SourcesTemplatingEngineMojo) SU(new SourcesTemplatingEngineMojo(), executionIdentifier);
@@ -249,48 +262,55 @@ public class TemplatingEngineMojoTest {
     Files.createDirectories(spr);
     templateSources = spr.resolve("src").resolve("main").resolve("templates").toFile();
     templateTestSources = spr.resolve("src").resolve("test").resolve("templates").toFile();
-    Reflect.on(sm).set("appendExecutionIdentifierToOutput", false).set("engineHint", engine)
-        .set("source", templateSources).set("dumpContext", true);
-    sm.execute();
+    sm.appendExecutionIdentifierToOutput = false;
+    sm.engineHint = engine;
+    sm.source = templateSources;
+    sm.dumpContext = true;
+    assertThrows(MojoExecutionException.class, () -> sm.execute());
   }
 
-  @Test(expected = MojoExecutionException.class)
-  public void testWrongEngine() throws MojoExecutionException, IOException {
+  @Test
+  public void testWrongEngine() throws IOException {
     executionIdentifier = "test1";
     sm = (SourcesTemplatingEngineMojo) SU(new SourcesTemplatingEngineMojo(), executionIdentifier);
     engine = UUID.randomUUID().toString();
-    //    appendExecutionIdentifierToOutput = true;
+    // appendExecutionIdentifierToOutput = true;
     Path spr = testClasses.resolve(executionIdentifier);
     Files.createDirectories(spr);
     templateSources = spr.resolve("src").resolve("main").resolve("templates").toFile();
-    //    templateTestSources = spr.resolve("src").resolve("test").resolve("templates").toFile();
-    //    sourcePathRoot = spr.toFile();
-    Reflect.on(sm)
-        //    .set("appendExecutionIdentifierToOutput", false)
-        //    .set("sourcePathRoot", spr.toFile())
-        //
-        .set("engineHint", engine).set("source", templateSources)
-    //    .set("templateTestSources", templateTestSources)
-    //    .set("dumpContext",true)
-    //    .set("sourcePathRoot", sourcePathRoot)
-    ;
-    sm.execute();
+    // templateTestSources =
+    // spr.resolve("src").resolve("test").resolve("templates").toFile();
+    // sourcePathRoot = spr.toFile();
+    sm.engineHint = engine;
+    sm.source = templateSources;
+    assertThrows(MojoExecutionException.class, () -> sm.execute());
   }
 
   AbstractTemplatingMojo SU(final AbstractTemplatingMojo sm, String execId) {
 
-    final MojoExecution mojo = new MojoExecution(new MojoDescriptor());
-    Reflect.on(mojo).set("executionId", execId);
-    Reflect.on(sm).set("log", new DefaultLog(new ConsoleLogger(2, "TemplatingEngineMojoTest")));
-    Reflect.on(sm).set("suppliers", suppliers).set("properties", properties).set("mojo", mojo)
-        .set("propertiesAppended", propertiesAppended).set("fileToPropertiesArray", fileToPropertiesArray)
-        .set("fileToPropertiesArrayAppended", fileToPropertiesArrayAppended).set("files", files)
-        .set("filesAppendeds", filesAppendeds).set("source", templateSources)
-        .set("outputDirectory", sourcesOutputDirectory).set("sourceExtensions", sourceExtensions)
-        .set("includeDotFiles", includeDotFiles).set("includeHidden", includeHidden)
-        .set("includeEnvironment", includeEnvironment).set("includeSystemProperties", includeSystemProperties)
-        .set("project", project);
+    TemplatingComponent tc = new TemplatingComponent();
 
+    Logger              l  = new ConsoleLogger(2, "TemplatingEngineMojoTest");
+    tc.enableLogging(l);
+    final MojoExecution mojo = new MojoExecution(new MojoDescriptor(), execId);
+    sm.setComp(tc);
+    sm.setLog(new DefaultLog(l));
+    sm.suppliers = suppliers;
+    sm.properties.putAll(properties);
+    sm.mojo = mojo;
+    sm.propertiesAppended.putAll(propertiesAppended);
+    sm.fileToPropertiesArray.putAll(fileToPropertiesArray);
+    sm.fileToPropertiesArrayAppended.putAll(fileToPropertiesArrayAppended);
+    sm.files.addAll(files);
+    sm.filesAppendeds.addAll(filesAppendeds);
+    sm.setSource(templateSources);
+    sm.setOutputDirectory(sourcesOutputDirectory);
+    sm.sourceExtensions.addAll(sourceExtensions);
+    sm.includeDotFiles = includeDotFiles;
+    sm.includeHidden = includeHidden;
+    sm.includeEnvironment = includeEnvironment;
+    sm.includeSystemProperties = includeSystemProperties;
+    sm.project = project;
 
     return sm;
   }

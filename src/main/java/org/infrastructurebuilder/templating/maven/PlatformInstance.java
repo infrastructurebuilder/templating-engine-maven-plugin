@@ -29,7 +29,7 @@ import org.infrastructurebuilder.templating.TemplatingEngineException;
 public class PlatformInstance {
   public static final String  NON_NULL = " cannot be null";
 
-  private static final String ERR_STR  = "Only one of <properties> or <path> is allowed";
+  private static final String ERR_STR  = "Only one of <properties>, <relPath>, or <path> is allowed";
 
   private String              id;
   private String              dirName;
@@ -42,13 +42,13 @@ public class PlatformInstance {
   }
 
   public void setPath(String path) {
-    if (properties != null)
+    if (properties != null )
       throw new TemplatingEngineException(ERR_STR);
     this.path = path;
   }
 
   public void setProperties(Properties properties) {
-    if (path != null)
+    if (path != null )
       throw new TemplatingEngineException(ERR_STR);
     this.properties = properties;
   }
@@ -63,6 +63,7 @@ public class PlatformInstance {
 
   public Properties getProperties() {
     if (properties == null) {
+
       // We must have a path or it's an error;
       properties = new Properties();
       Path r = Path.of(path);

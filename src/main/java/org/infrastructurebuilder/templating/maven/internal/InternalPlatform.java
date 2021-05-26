@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.infrastructurebuilder.templating.MSOSupplier;
-import org.infrastructurebuilder.templating.maven.AbstractTemplatingMojo;
 import org.infrastructurebuilder.templating.maven.Platform;
 import org.infrastructurebuilder.templating.maven.PlatformInstance;
 
@@ -68,12 +67,20 @@ public class InternalPlatform {
     return String.join(".", ids);
   }
 
+  public String getIdsJoinedUSString() {
+    return String.join("_", ids);
+  }
+
   public String getPathJoinedDashString() {
     return String.join("-", paths);
   }
 
   public String getPathJoinedDotString() {
     return String.join(".", paths);
+  }
+
+  public String getPathJoinedUSString() {
+    return String.join("_", paths);
   }
 
   public String getInstancePlatformIdsJoinedDot() {
@@ -111,12 +118,15 @@ public class InternalPlatform {
     if (addProperties) {
       p.setProperty("ids_joined_dash", getIdsJoinedDashString());
       p.setProperty("ids_joined_dot", getIdsJoinedDotString());
+      p.setProperty("ids_joined_under", getIdsJoinedUSString());
       p.setProperty("path_joined_dash", getPathJoinedDashString());
       p.setProperty("path_joined_dot", getPathJoinedDotString());
+      p.setProperty("path_joined_under", getPathJoinedUSString());
       p.setProperty("paths_joined_sep", getPaths());
       p.setProperty("final_destination", getFinalDestination().map(Path::toString).orElse(":unknown:"));
     }
-    return () -> AbstractTemplatingMojo.toMSO.apply(getProperties());
+    Map<String, Object> v = TemplatingUtils.toMSO.apply(p);
+    return () -> v;
   }
 
   public void setFinalDestination(Path finalDestination) {

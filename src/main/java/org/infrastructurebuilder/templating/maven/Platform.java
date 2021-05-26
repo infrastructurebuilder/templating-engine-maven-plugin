@@ -15,9 +15,10 @@
  */
 package org.infrastructurebuilder.templating.maven;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A Platform layers properties atop each other and extends the target name by the value of the id
@@ -31,7 +32,7 @@ public class Platform {
   private List<PlatformInstance> instances = new ArrayList<>();
 
   public String getId() {
-    return Objects.requireNonNull(id, "id must contain a value");
+    return requireNonNull(id, "id must contain a value");
   }
 
   public List<PlatformInstance> getInstances() {

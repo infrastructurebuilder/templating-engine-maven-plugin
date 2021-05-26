@@ -15,28 +15,28 @@
  */
 package org.infrastructurebuilder.templating;
 
-import static org.junit.Assert.assertEquals;
 
-import java.io.File;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.infrastructurebuilder.templating.maven.AbstractTemplatingMojo;
+import org.infrastructurebuilder.templating.maven.internal.TemplatingUtils;
 import org.infrastructurebuilder.util.core.WorkingPathSupplier;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AbstractTemplatingMojoTest {
   private static WorkingPathSupplier wps;
-  private static Path target;
-  private static Path testClasses;
-  private static Path tc;
+  private static Path                target;
+  private static Path                testClasses;
+  private static Path                tc;
 
-  @BeforeClass
+  @BeforeAll
   public static void setupClass() {
     wps = new WorkingPathSupplier();
     target = wps.getRoot();
@@ -44,45 +44,45 @@ public class AbstractTemplatingMojoTest {
     tc = testClasses.resolve("test2");
   }
 
-  private final Map<String, File> array = new HashMap<>();
-  private final Map<String, File> appended = new HashMap<>();
+  private final Map<String, Path> array    = new HashMap<>();
+  private final Map<String, Path> appended = new HashMap<>();
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     final Path f1 = tc.resolve("file1.txt");
     final Path a1 = tc.resolve("file2.txt");
-    array.put("1", f1.toFile());
-    appended.put("2", a1.toFile());
-    appended.put("1", a1.toFile());
+    array.put("1", f1);
+    appended.put("2", a1);
+    appended.put("1", a1);
   }
 
-  @Test //(expected = MojoExecutionException.class)
+  @Test // (expected = MojoExecutionException.class)
   public void testFailGenerateFileToPropertiesArray() throws MojoExecutionException {
-    final File f4 = tc.resolve("file5.properties").toFile();
+    final Path f4 = tc.resolve("file5.properties");
     appended.put("3", f4);
-    Map<String, Object>  b = AbstractTemplatingMojo.generateFileToPropertiesArray(array, appended);
+    Map<String, Object> b = TemplatingUtils.generateFileToPropertiesArray(array, appended);
     assertEquals(b.size(), 2);
   }
 
   @Test
   public void testFailGetFilesProperties() throws TemplatingEngineException {
-    final File f3 = tc.resolve("file3.properties").toFile();
-    final File f4 = tc.resolve("file5.properties").toFile();
-    final Map<String, Object> kk = AbstractTemplatingMojo.getFilesProperties(Arrays.asList(f3), Arrays.asList(f4));
+    final Path                f3 = tc.resolve("file3.properties");
+    final Path                f5 = tc.resolve("file5.properties");
+    final Map<String, Object> kk = TemplatingUtils.getFilesProperties(Arrays.asList(f3, f5));
     assertEquals(2, kk.size());
   }
 
   @Test
   public void testGenerateFileToPropertiesArray() throws MojoExecutionException {
-    final Map<String, Object> b = AbstractTemplatingMojo.generateFileToPropertiesArray(array, appended);
+    final Map<String, Object> b = TemplatingUtils.generateFileToPropertiesArray(array, appended);
     assertEquals(b.size(), 2);
   }
 
   @Test
   public void testGetFilesProperties() throws MojoExecutionException, TemplatingEngineException {
-    final File f3 = tc.resolve("file3.properties").toFile();
-    final File f4 = tc.resolve("file4.properties").toFile();
-    final Map<String, Object> kk = AbstractTemplatingMojo.getFilesProperties(Arrays.asList(f3), Arrays.asList(f4));
+    final Path                f3 = tc.resolve("file3.properties");
+    final Path                f4 = tc.resolve("file4.properties");
+    final Map<String, Object> kk = TemplatingUtils.getFilesProperties(Arrays.asList(f3, f4));
     assertEquals(3, kk.size());
   }
 
