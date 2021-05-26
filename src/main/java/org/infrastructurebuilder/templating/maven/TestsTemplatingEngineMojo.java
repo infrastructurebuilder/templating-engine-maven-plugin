@@ -16,10 +16,13 @@
 package org.infrastructurebuilder.templating.maven;
 
 import java.io.File;
+import java.nio.file.Path;
 
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.infrastructurebuilder.templating.maven.internal.TemplatingComponent;
 
 @Mojo(name = "test-sources", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresProject = true)
 public class TestsTemplatingEngineMojo extends AbstractTemplatingMojo {
@@ -29,13 +32,14 @@ public class TestsTemplatingEngineMojo extends AbstractTemplatingMojo {
    *
    */
   @Parameter(required = true, defaultValue = "${basedir}/src/test/templates/")
-  private File source;
+  public File                source;
   /**
    * Output directory for generated test sources.
    *
    */
   @Parameter(required = false, defaultValue = "${project.build.directory}/generated-test-sources")
-  private File outputDirectory;
+  public File                outputDirectory;
+
 
   @Override
   public File getOutputDirectory() {
@@ -43,13 +47,22 @@ public class TestsTemplatingEngineMojo extends AbstractTemplatingMojo {
   }
 
   @Override
-  public File getScanningRootSource() {
-    return source;
+  public Path getScanningRootSource() {
+    return source.toPath();
   }
+  @Override
+  public void setSource(File source) {
+    this.source = source;
+  }
+
 
   @Override
   public TemplateType getType() {
     return TemplateType.TEST_SOURCE;
   }
 
+  @Override
+  public void setOutputDirectory(File out) {
+    this.outputDirectory = out;
+  }
 }

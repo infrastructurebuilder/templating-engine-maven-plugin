@@ -19,7 +19,7 @@ import static org.apache.maven.plugins.annotations.InstantiationStrategy.PER_LOO
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 import static org.infrastructurebuilder.templating.TemplatingEngineException.et;
-import static org.infrastructurebuilder.templating.maven.IterativeResourcesTemplatingEngineMojo.ITERATED_RESOURCES;
+import static org.infrastructurebuilder.templating.maven.internal.IterativeTemplatingComponent.ITERATED_RESOURCES;
 
 import java.io.File;
 import java.nio.file.Path;

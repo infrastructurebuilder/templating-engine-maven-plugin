@@ -68,7 +68,7 @@ abstract public class AbstractIterativeTemplatingPackagingMojo extends AbstractM
   private JarArchiver                jarArchiver;
 
   @Component
-  protected MavenProjectHelper         mavenProjectHelper;
+  protected MavenProjectHelper       mavenProjectHelper;
 
   @Parameter(defaultValue = "${mojoExecution}", readonly = true)
   private MojoExecution              mojo;
@@ -77,7 +77,7 @@ abstract public class AbstractIterativeTemplatingPackagingMojo extends AbstractM
   private File                       outputDirectory;
 
   @Parameter(property = "project", readonly = true, required = true)
-  protected MavenProject               project;
+  protected MavenProject             project;
 
   @Parameter(defaultValue = "${session}", readonly = true, required = true)
   private MavenSession               session;

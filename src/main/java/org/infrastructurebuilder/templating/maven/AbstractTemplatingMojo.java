@@ -16,11 +16,15 @@
 package org.infrastructurebuilder.templating.maven;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -34,21 +38,22 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.templating.MSOSupplier;
 import org.infrastructurebuilder.templating.TemplatingEngineSupplier;
+import org.infrastructurebuilder.templating.maven.internal.TemplatingComponent;
 import org.infrastructurebuilder.templating.maven.internal.TemplatingUtils;
 
 public abstract class AbstractTemplatingMojo extends AbstractMojo {
 
   @Parameter(defaultValue = "${mojoExecution}", readonly = true)
-  protected MojoExecution                                   mojo;
+  public MojoExecution                         mojo;
 
   @Parameter(required = false)
-  protected boolean                               appendExecutionIdentifierToOutput;
+  public boolean                               appendExecutionIdentifierToOutput;
 
   @Parameter(required = false)
-  protected boolean                               dumpContext;
+  public boolean                               dumpContext;
 
   @Parameter(required = false, defaultValue = "false")
-  protected boolean                               skip;
+  public boolean                               skip;
 
   /**
    * PropertySuppliers are the list that injects which of the
@@ -56,17 +61,17 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
    * final Properties and in what order
    */
   @Parameter
-  protected final List<String>                    propertySuppliers             = new ArrayList<>();
+  public final List<String>                    propertySuppliers             = new ArrayList<>();
 
   @Component
-  protected final Map<String, MSOSupplier>        propSuppliers                 = new HashMap<>();
+  public final Map<String, MSOSupplier>        propertySuppliersMap          = new HashMap<>();
 
   /**
    * Extra properties
    *
    */
   @Parameter(required = false)
-  protected final Map<String, String>               properties                    = new HashMap<>();
+  public final Map<String, String>             properties                    = new HashMap<>();
 
   /**
    * Extra properties added to "properties" , allowing us to use properties
@@ -75,7 +80,7 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
    */
 
   @Parameter(required = false)
-  protected final Map<String, String>               propertiesAppended            = new HashMap<>();
+  public final Map<String, String>             propertiesAppended            = new HashMap<>();
 
   /**
    * Reads a file of lines, setting a property equal to the key that maps to a
@@ -90,14 +95,14 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
    *
    */
   @Parameter(required = false)
-  protected final Map<String, File>                 fileToPropertiesArray         = new HashMap<>();
+  public final Map<String, File>               fileToPropertiesArray         = new HashMap<>();
 
   /**
    * Mappings added to the property above. This allows us to use
    * filesToPropertiesArray as a configured base and then add per-execution
    */
   @Parameter(required = false)
-  protected final Map<String, File>                 fileToPropertiesArrayAppended = new HashMap<>();
+  public final Map<String, File>               fileToPropertiesArrayAppended = new HashMap<>();
 
   /**
    * Files, in order, to read in and merge to make a single Properties object that
@@ -108,82 +113,130 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
    *
    */
   @Parameter(required = false)
-  protected final List<File>                        files                         = new ArrayList<>();
+  public final List<File>                      files                         = new ArrayList<>();
   /**
    * Files appended to the "files" parameter from above. This allows us to use
    * "files" as a base config and then add values to it per-execution
    */
   @Parameter(required = false)
-  protected final List<File>                      filesAppendeds                = new ArrayList<>();
+  public final List<File>                      filesAppendeds                = new ArrayList<>();
 
   /**
    * List of @{code sourceExtension} elements that are "source" files Defaults to
    * ["java", "scala", "groovy", "clj"]
    */
   @Parameter(required = false)
-  protected final Set<String>                     sourceExtensions              = null;
+  public final Set<String>                     sourceExtensions              = new HashSet<>();
 
   /**
    * Include files with names beginning with "."
    */
   @Parameter(required = true, defaultValue = "false")
-  protected boolean                               includeDotFiles;
+  public boolean                               includeDotFiles;
 
   /**
    * Include files marked as "hidden" by the OS
    */
   @Parameter(required = true, defaultValue = "false")
-  protected boolean                               includeHidden;
+  public boolean                               includeHidden;
 
   /**
    * Include System.getProperties as a starter element for the properties
    */
   @Parameter(required = true, defaultValue = "false")
-  protected boolean                               includeSystemProperties;
+  public boolean                               includeSystemProperties;
   /**
    * Include System.getenv() in properties
    */
   @Parameter(required = true, defaultValue = "false")
-  protected boolean                               includeEnvironment;
+  public boolean                               includeEnvironment;
 
   @Parameter(required = true, defaultValue = "false")
-  protected boolean                               caseSensitive;
+  public boolean                               caseSensitive;
 
   @Parameter(required = true, readonly = true, defaultValue = "${project}")
-  protected MavenProject                          project;
+  public MavenProject                          project;
 
   @Parameter(required = true)
-  protected String                                engineHint;
+  public String                                engineHint;
 
   @Parameter(required = false, defaultValue = "true")
-  protected boolean                               useSourceParent               = true;
+  public boolean                               useSourceParent               = true;
+
+  @Component(hint = TemplatingComponent.TEMPLATING_COMPONENT)
+  public TemplatingComponent comp;
+
+  public TemplatingComponent getTemplatingComponent() {
+    return comp;
+  }
+
+  public void setComp(TemplatingComponent comp) {
+    this.comp = comp;
+  }
 
   /**
    * This map is automatically populated from the dependency tree via plexus
    */
   @Component(role = TemplatingEngineSupplier.class)
-  protected Map<String, TemplatingEngineSupplier> suppliers;
+  public Map<String, TemplatingEngineSupplier> suppliers;
 
   @Override
   public void execute() throws MojoExecutionException {
     if (!skip) {
-      Path parentPath = getScanningRootSource().toPath();
-      if (useSourceParent)
-        parentPath = parentPath.getParent();
-      TemplatingUtils.localExecute(getType(), mojo.getExecutionId(), appendExecutionIdentifierToOutput, suppliers,
-          engineHint,TemplatingUtils.mapSS2Props.apply(properties), TemplatingUtils.mapSS2Props.apply(propertiesAppended), fileToPropertiesArray, fileToPropertiesArrayAppended,
-          files, filesAppendeds, parentPath, getScanningRootSource(), getOutputDirectory().toPath(), sourceExtensions,
-          includeDotFiles, includeHidden, dumpContext, includeSystemProperties, includeEnvironment,
-          requireNonNull(project, "maven project"), getLog(), caseSensitive, propertySuppliers, propSuppliers);
+      setup().execute(getPluginContext());
     } else {
       getLog().info("Skipping templating for " + mojo.getExecutionId());
     }
+  }
+
+  public TemplatingComponent setup() throws MojoExecutionException {
+    TemplatingComponent c = getTemplatingComponent();
+    c.type = getType();
+    c.executionId = requireNonNull(mojo).getExecutionId();
+    c.properties = properties.entrySet().stream().collect(toMap(k -> k.getKey(), v -> v.getValue()));
+    c.propertiesAppended = propertiesAppended.entrySet().stream().collect(toMap(k -> k.getKey(), v -> v.getValue()));
+    c.fileToPropertiesArray = fileToPropertiesArray.entrySet().stream()
+        .collect(toMap(k -> k.getKey(), v -> v.getValue().toPath().toAbsolutePath()));
+    c.fileToPropertiesArrayAppended = fileToPropertiesArrayAppended.entrySet().stream()
+        .collect(toMap(k -> k.getKey(), v -> v.getValue().toPath().toAbsolutePath()));
+    ;
+    c.project = requireNonNull(this.project);
+    c.sourceExtensions = sourceExtensions;
+    c.useSourceParent = useSourceParent;
+    c.systemProperties = TemplatingUtils.toMSO
+        .apply(includeSystemProperties ? System.getProperties() : new Properties());
+    c.env = includeEnvironment ? new HashMap<>() : new HashMap<>(System.getenv());
+
+    ArrayList<Path> f = new ArrayList<>(files.stream().map(File::toPath).collect(toList()));
+    f.addAll(filesAppendeds.stream().map(File::toPath).collect(toList()));
+    c.files = f;
+    c.appendExecutionIdentifierToOutput = appendExecutionIdentifierToOutput;
+    c.propertySupplierKeys = propertySuppliers;
+    c.propertySupplierMap = propertySuppliersMap;
+    c.scanningRootSource = getScanningRootSource();
+    c.outputDirectory = getOutputDirectory().toPath();
+
+    TemplatingEngineSupplier comp = ofNullable(suppliers.get(engineHint))
+        .orElseThrow(() -> new MojoExecutionException("No engineHint supplier named '" + engineHint + "'"));
+    comp.setLog(getLog());
+    comp.setProject(project);
+    comp.setIncludeDotFiles(includeDotFiles);
+    comp.setIncludeHiddenFiles(includeHidden);
+    comp.setSourceExtensions(sourceExtensions);
+    comp.setCaseSensitive(caseSensitive);
+
+    c.comp = comp;
+    return c;
   }
 
   abstract public TemplateType getType();
 
   protected abstract File getOutputDirectory();
 
-  protected abstract File getScanningRootSource();
+  protected abstract Path getScanningRootSource();
+
+  public abstract void setSource(File source);
+
+  public abstract void setOutputDirectory(File out);
 
 }

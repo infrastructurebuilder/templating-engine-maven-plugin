@@ -16,10 +16,13 @@
 package org.infrastructurebuilder.templating.maven;
 
 import java.io.File;
+import java.nio.file.Path;
 
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.infrastructurebuilder.templating.maven.internal.TemplatingComponent;
 
 /**
  * Generates source code with a TemplatingEngine instace
@@ -34,13 +37,24 @@ public class TestResourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
    * @required
    */
   @Parameter(required = true, defaultValue = "${basedir}/src/test/resource-templates/")
-  private File source;
+  public File                source;
   /**
    * Output directory for resources.
    *
    */
   @Parameter(required = false, defaultValue = "${project.build.directory}/generated-test-resources/")
-  private File outputDirectory;
+  public File                outputDirectory;
+
+  @Override
+  public void setSource(File source) {
+    this.source = source;
+  }
+
+  @Override
+  public void setOutputDirectory(File out) {
+    this.outputDirectory = out;
+  }
+
 
   @Override
   public File getOutputDirectory() {
@@ -48,9 +62,10 @@ public class TestResourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
   }
 
   @Override
-  public File getScanningRootSource() {
-    return source;
+  public Path getScanningRootSource() {
+    return source.toPath();
   }
+
 
   @Override
   public TemplateType getType() {

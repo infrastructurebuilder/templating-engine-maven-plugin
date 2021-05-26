@@ -16,12 +16,13 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>52</version>
+    <version>53</version>
   </parent>
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>templating-engine-maven-plugin</artifactId>
@@ -31,8 +32,8 @@
   <name>${project.artifactId}</name>
   <properties>
     <templating.engine.version>0.9.7</templating.engine.version>
-    <test.coverage.percentage.required>1</test.coverage.percentage.required>
-    <jacoco.max.missed.classes>55</jacoco.max.missed.classes>
+    <test.coverage.percentage.required>39</test.coverage.percentage.required>
+    <jacoco.max.missed.classes>9</jacoco.max.missed.classes>
   </properties>
   <scm>
     <connection>scm:git:${git.url}</connection>
@@ -55,12 +56,21 @@
     <system>Travis-CI</system>
     <url>https://travis-ci.org/${team.group.id}/${project.artifactId}</url>
   </ciManagement>
+
   <dependencies>
+
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.infrastructurebuilder.templating</groupId>
       <artifactId>templating-engine</artifactId>

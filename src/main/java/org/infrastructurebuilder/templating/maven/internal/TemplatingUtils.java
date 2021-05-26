@@ -1,5 +1,22 @@
+/*
+ * Copyright © 2019 admin (admin@infrastructurebuilder.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.infrastructurebuilder.templating.maven.internal;
 
+import static java.nio.file.Files.isReadable;
+import static java.nio.file.Files.isRegularFile;
 import static java.util.Objects.requireNonNull;
 import static org.infrastructurebuilder.templating.TemplatingEngine.EXECUTION_IDENTIFIER;
 import static org.infrastructurebuilder.templating.TemplatingEngine.mergeProperties;
@@ -9,21 +26,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
 import org.infrastructurebuilder.templating.AbstractMavenBackedPropertiesSupplier;
 import org.infrastructurebuilder.templating.MSOSupplier;
 import org.infrastructurebuilder.templating.TemplatingEngine;
@@ -53,13 +68,13 @@ public final class TemplatingUtils {
     return map.entrySet().stream().collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue()));
   }
 
-  public final static Function<Map<String, File>, Map<String, JSONArray>> _getSingleMap = (m) -> {
+  public final static Function<Map<String, Path>, Map<String, JSONArray>> _getSingleMap = (m) -> {
     final Map<String, JSONArray> map = new HashMap<>();
     requireNonNull(m).entrySet().forEach(e -> {
-      if (e.getValue().isFile() && e.getValue().canRead()) {
+      if (Files.isRegularFile(e.getValue()) && Files.isReadable(e.getValue())) {
         try {
           final JSONArray arry = new JSONArray();
-          Files.readAllLines(e.getValue().toPath())
+          Files.readAllLines(e.getValue())
               // Now stream
               .stream()
               // And trim
@@ -72,15 +87,15 @@ public final class TemplatingUtils {
               // New JSONArray.toString()
               arry);
         } catch (final IOException e1) {
-          throw new TemplatingEngineException("Failed to read " + e.getValue().getAbsolutePath(), e1);
+          throw new TemplatingEngineException("Failed to read " + e.getValue(), e1);
         }
       }
     });
     return map;
   };
 
-  public static Map<String, Object> generateFileToPropertiesArray(final Map<String, File> array,
-      final Map<String, File> appended) throws MojoExecutionException {
+  public static Map<String, Object> generateFileToPropertiesArray(final Map<String, Path> array,
+      final Map<String, Path> appended) throws MojoExecutionException {
     return extendWithAll(_getSingleMap.apply(array), _getSingleMap.apply(appended));
   }
 
@@ -89,15 +104,11 @@ public final class TemplatingUtils {
         .collect(Collectors.toMap(Function.identity(), v -> p.getProperty(v)));
   };
 
-  public static Map<String, Object> getFilesProperties(final List<File> filez, final List<File> appended)
-      throws TemplatingEngineException {
-    Map<String, Object> p            = new HashMap<>();
-    final List<File>    workingFiles = new ArrayList<>();
-    workingFiles.addAll(filez);
-    workingFiles.addAll(appended);
-    for (final File f : workingFiles) {
-      if (f.isFile() && f.canRead()) {
-        try (InputStream ins = Files.newInputStream(f.toPath())) {
+  public static Map<String, Object> getFilesProperties(final List<Path> workingFiles) throws TemplatingEngineException {
+    Map<String, Object> p = new HashMap<>();
+    for (final Path f : workingFiles) {
+      if (isRegularFile(f) && isReadable(f)) {
+        try (InputStream ins = Files.newInputStream(f)) {
           final Properties temp = new Properties();
           temp.load(ins);
           p = mergeProperties(p, toMSO.apply(temp));
@@ -135,49 +146,37 @@ public final class TemplatingUtils {
    * @param log
    * @param caseSensitive
    * @param list
-   * @param map
+   * @param msoSupplierMap
    * @throws MojoExecutionException
    */
   public final static void localExecute(final TemplateType type, final String executionIdentifier,
-      final boolean appendExecutionIdentifierToOutput, final Map<String, TemplatingEngineSupplier> suppliers,
-      final String engineHint, final Properties properties, final Properties propertiesAppended,
-      final Map<String, File> fileToPropertiesArray, final Map<String, File> fileToPropertiesArrayAppended,
-      final List<File> files, final List<File> filesAppendeds, final Path sourcePathRoot, final File templateSources,
-      Path sourcesOutputDirectory, final Set<String> sourceExtensions, final boolean includeDotFiles,
-      final boolean includeHidden, final boolean includeSystemProperties, final boolean includeSystemEnv,
-      final boolean dumpContext, final MavenProject optProject, final Log log, final boolean caseSensitive,
-      final List<String> list, final Map<String, MSOSupplier> map) throws MojoExecutionException {
-
-    TemplatingEngineSupplier comp;
-
-    comp = Optional.ofNullable(suppliers.get(engineHint))
-        .orElseThrow(() -> new MojoExecutionException("No engineHint supplier named '" + engineHint + "'"));
+      final boolean appendExecutionIdentifierToOutput, final TemplatingEngineSupplier comp,
+      final Map<String, Object> properties, final Map<String, Object> propertiesAppended,
+      final Map<String, Path> fileToPropertiesArray, final Map<String, Path> fileToPropertiesArrayAppended,
+      final List<Path> files, final Path sourcePathRoot, final Path templateSources, Path sourcesOutputDirectory,
+      Map<String, Object> systemProperties, final Map<String, Object> env, final MavenProject optProject,
+      final Logger log, final List<String> msoSuppliersKeys, final Map<String, MSOSupplier> msoSupplierMap)
+      throws MojoExecutionException {
 
     Map<String, Object> real;
-    Map<String, Object> env = new HashMap<>();
-    if (includeSystemEnv)
-      env.putAll(System.getenv());
     try {
-      real = mergeProperties(toMSO.apply(includeSystemProperties ? System.getProperties() : new Properties()), env,
-          // Get all properties from files and filesAppendeds
-          getFilesProperties(files, filesAppendeds),
-          // Merged with all array properties and appendeds
-          extendWithAll(
-              // File to proerptiesArray
-              _getSingleMap.apply(fileToPropertiesArray),
-              // File to properties array appended
-              _getSingleMap.apply(fileToPropertiesArrayAppended)
+      real = mergeProperties(
+          // Overriding Order
+          systemProperties,
           //
-          ),
-
+          env,
+          // Get all properties from files and filesAppendeds
+          getFilesProperties(files),
+          // Merged with all array properties and appendeds
+          generateFileToPropertiesArray(fileToPropertiesArray, fileToPropertiesArrayAppended),
           // And finall all the properties
-          toMSO.apply(properties),
+          properties,
           // And then all appended properties
-          toMSO.apply(propertiesAppended));
+          propertiesAppended);
 
       // THEN we use the suppliers
-      for (final String pval : list) { // Some suppliers need addl configuration
-        final MSOSupplier pv = requireNonNull(map.get(pval), "Properties supplier " + pval + " not found");
+      for (final String supplierKey : msoSuppliersKeys) { // Some suppliers need addl configuration
+        final MSOSupplier pv = requireNonNull(msoSupplierMap.get(supplierKey), "MSOSupplier " + supplierKey + " not found");
         if (pv instanceof AbstractMavenBackedPropertiesSupplier) {
           ((AbstractMavenBackedPropertiesSupplier) pv)
               // Inject Maven Project
@@ -198,23 +197,15 @@ public final class TemplatingUtils {
     if (appendExecutionIdentifierToOutput) {
       sourcesOutputDirectory = sourcesOutputDirectory.resolve(executionIdentifier);
     }
-
-    comp.setLog(log);
-    comp.setProject(optProject);
     comp.setProperties(real);
     comp.setSourcesOutputDirectory(sourcesOutputDirectory);
-    comp.setIncludeDotFiles(includeDotFiles);
-    comp.setIncludeHiddenFiles(includeHidden);
-    comp.setSourceExtensions(sourceExtensions);
-    comp.setCaseSensitive(caseSensitive);
+
     try {
       comp.setSourcePathRoot(sourcePathRoot);
-      comp.setExecutionSource(templateSources.toPath());
+      comp.setExecutionSource(templateSources);
       final Optional<String> s = comp.get().execute();
       if (s.isPresent()) {
-        if (dumpContext) {
-          log.info("Context for main execution is [probably]: \n" + s.get());
-        }
+        log.debug("Context for main execution is [probably]: \n" + s.get());
 
         final Resource res = new Resource();
         res.setDirectory(sourcesOutputDirectory.toAbsolutePath().toString());

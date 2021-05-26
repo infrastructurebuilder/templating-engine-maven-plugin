@@ -35,12 +35,12 @@
       <plugin>
         <groupId>org.infrastructurebuilder.templating</groupId>
         <artifactId>templating-engine-maven-plugin</artifactId>
-        <version>0.9.8-SNAPSHOT</version>
+        <version>0.9.10-SNAPSHOT</version>
         <dependencies>
           <dependency>
             <groupId>org.infrastructurebuilder.templating</groupId>
             <artifactId>velocity-templating-engine</artifactId>
-            <version>0.9.6</version>
+            <version>0.9.7</version>
           </dependency>
 
         </dependencies>
