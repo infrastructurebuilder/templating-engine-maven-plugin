@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 public class AbstractPlatformTest {
 
-  private static final TestingPathSupplier tps = new TestingPathSupplier();
+  public static final TestingPathSupplier tps = new TestingPathSupplier();
   protected static final String Z = "Z";
   protected static final String DIR = tps.getTestClasses().resolve("i2.properties").toString();
   protected static final String Y = "Y";

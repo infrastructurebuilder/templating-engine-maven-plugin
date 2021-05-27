@@ -43,38 +43,38 @@ public class IterativeResourcesTemplatingEngineMojo extends AbstractTemplatingMo
    *
    */
   @Parameter(required = true, defaultValue = "")
-  private List<Platform>               platforms      = new ArrayList<>();
+  public List<Platform>               platforms      = new ArrayList<>();
 
   @Parameter(required = false, defaultValue = "true")
-  private boolean                      addIdentifiers;
+  public boolean                      addIdentifiers;
 
   /**
    * finalOverrides are applied LAST.  If anything needs to be over-ridden, this is the place to do it
    */
   @Parameter(required = false)
-  private Properties                   finalOverrides = new Properties();
+  public Properties                   finalOverrides = new Properties();
 
   @Parameter(required = false)
-  private File                         pathPropertiesRoot;
+  public File                         pathPropertiesRoot;
 
   @Parameter(required = false, defaultValue = "path.properties")
-  private String                       pathPropertiesName;
+  public String                       pathPropertiesName;
   /**
    * By default (and for convenience), we use the location of dependency:unpack-dependencies
    *
    * @required
    */
   @Parameter(required = true, defaultValue = "${project.build.directory}/dependency")
-  private File                         source;
+  public File                         source;
   /**
    * Output directory for resources.
    *
    */
   @Parameter(required = false, defaultValue = "${project.build.directory}/generated-resources/iterated-templating-resources")
-  private File                         outputDirectory;
+  public File                         outputDirectory;
 
   @Component
-  private IterativeTemplatingComponent comp;
+  public IterativeTemplatingComponent icomp;
 
   @Override
   public TemplatingComponent setup() throws MojoExecutionException {
@@ -117,7 +117,7 @@ public class IterativeResourcesTemplatingEngineMojo extends AbstractTemplatingMo
       @SuppressWarnings("rawtypes")
       Map pc = getPluginContext();
 
-      setup().execute(getPluginContext());
+      setup().execute(pc);
 
       setPluginContext(pc);
 
@@ -154,8 +154,12 @@ public class IterativeResourcesTemplatingEngineMojo extends AbstractTemplatingMo
   }
 
   @Override
+  public void setComp(TemplatingComponent comp) {
+    this.icomp = (IterativeTemplatingComponent) comp;
+  }
+  @Override
   public TemplatingComponent getTemplatingComponent() {
-    return comp;
+    return icomp;
   }
 
 }

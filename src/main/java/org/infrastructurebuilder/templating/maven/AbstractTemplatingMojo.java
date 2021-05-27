@@ -225,7 +225,7 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
     comp.setSourceExtensions(sourceExtensions);
     comp.setCaseSensitive(caseSensitive);
 
-    c.comp = comp;
+    c.templatingEngineSupplier = comp;
     return c;
   }
 
