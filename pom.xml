@@ -32,8 +32,8 @@
   <name>${project.artifactId}</name>
   <properties>
     <templating.engine.version>0.9.7</templating.engine.version>
-    <test.coverage.percentage.required>39</test.coverage.percentage.required>
-    <jacoco.max.missed.classes>9</jacoco.max.missed.classes>
+    <test.coverage.percentage.required>50</test.coverage.percentage.required>
+    <jacoco.max.missed.classes>3</jacoco.max.missed.classes>
   </properties>
   <scm>
     <connection>scm:git:${git.url}</connection>

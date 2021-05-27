@@ -22,8 +22,16 @@ public class ClassifierNameMapper {
   public String pattern;
   public String result;
 
+  public ClassifierNameMapper() {
+  }
+
+  ClassifierNameMapper(String p, String r) {
+    this.pattern = p;
+    this.result = r;
+  }
+
   public Optional<String> map(String inbound) {
-    return Optional.ofNullable(matches(pattern) ? String.format(result, inbound) : null);
+    return Optional.ofNullable(matches(inbound) ? String.format(result, inbound) : null);
   }
 
   public boolean matches(String inbound) {
