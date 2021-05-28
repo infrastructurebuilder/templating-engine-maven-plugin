@@ -33,8 +33,7 @@
   <properties>
     <templating.engine.version>0.9.7</templating.engine.version>
     <velocity.templating.engine.version>0.9.7</velocity.templating.engine.version>
-    <test.coverage.percentage.required>68</test.coverage.percentage.required>
-    <jacoco.max.missed.classes>1</jacoco.max.missed.classes>
+    <test.coverage.percentage.required>90</test.coverage.percentage.required>
   </properties>
   <scm>
     <connection>scm:git:${git.url}</connection>

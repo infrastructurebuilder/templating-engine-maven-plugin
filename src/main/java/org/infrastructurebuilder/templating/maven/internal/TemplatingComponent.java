@@ -16,12 +16,10 @@
 package org.infrastructurebuilder.templating.maven.internal;
 
 import static java.util.Objects.requireNonNull;
-import static org.infrastructurebuilder.templating.maven.internal.TemplatingUtils.mapSS2Props;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Inject;

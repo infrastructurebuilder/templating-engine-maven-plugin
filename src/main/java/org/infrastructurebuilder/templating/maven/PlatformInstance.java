@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -30,7 +31,7 @@ import org.infrastructurebuilder.templating.TemplatingEngineException;
 public class PlatformInstance {
   public static final String  NON_NULL = " cannot be null";
 
-  private static final String ERR_STR  = "Only one of <properties>, <relPath>, or <path> is allowed";
+  private static final String ERR_STR  = "Only one of <properties>  or <path> is allowed";
 
   private String              id;
   private String              dirName;

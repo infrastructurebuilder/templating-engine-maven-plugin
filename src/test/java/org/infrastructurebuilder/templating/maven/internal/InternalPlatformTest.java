@@ -17,97 +17,72 @@ package org.infrastructurebuilder.templating.maven.internal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Properties;
+
+import org.infrastructurebuilder.templating.MSOSupplier;
 import org.infrastructurebuilder.templating.maven.AbstractPlatformTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class InternalPlatformTest extends AbstractPlatformTest {
 
   private InternalPlatform ipl1, ipl2, ipl3;
-  @Test
-  void testInternalPlatform() {
-    ipl1 = new InternalPlatform(p);
+
+  @BeforeEach
+  void beforeEach() {
+    ipl1 = new InternalPlatform(p).copy();
   }
 
-  /*
   @Test
   void testExtend() {
-    fail("Not yet implemented");
-  }
+    String k = ipl1.getIdsJoinedDashString();
+    assertEquals("",ipl1.getInstancePlatformIdsJoinedDot());
+    assertEquals("", k);
 
-  @Test
-  void testGetIdsJoinedDashString() {
-    fail("Not yet implemented");
-  }
+    i1.setProperties(new Properties());
+    assertEquals("InternalPlatform [paths=, tp={}, root=X]",ipl1.toString());
+    i2.setPath(DIR);
 
-  @Test
-  void testGetIdsJoinedDotString() {
-    fail("Not yet implemented");
-  }
+    ipl2 = ipl1.extend(i1).copy();
+    k = ipl2.getIdsJoinedDashString();
+    assertEquals(Y, k);
+    ipl3 = ipl2.extend(i2);
+    k = ipl3.getIdsJoinedDotString();
+    assertEquals(Y + "." + Z, k);
+    assertEquals(Y + "_" + Z, ipl3.getIdsJoinedUSString());
+    String a = ipl3.getPathJoinedUSString();
+    assertEquals(Y + "_" + DIR, a);
+    assertEquals(Y + "-" + DIR, ipl3.getPathJoinedDashString());
+    assertEquals(Y + "." + DIR, ipl3.getPathJoinedDotString());
 
-  @Test
-  void testGetIdsJoinedUSString() {
-    fail("Not yet implemented");
-  }
+    String paths = ipl3.getPaths();
+    assertTrue(paths.contains(FileSystems.getDefault().getSeparator()));
 
-  @Test
-  void testGetPathJoinedDashString() {
-    fail("Not yet implemented");
-  }
+    Path q = tps.get();
 
-  @Test
-  void testGetPathJoinedDotString() {
-    fail("Not yet implemented");
-  }
+    MSOSupplier v = ipl3.getMSO(true);
+    Map<String, Object> ms = v.get();
+    assertEquals(10,ms.size());
 
-  @Test
-  void testGetPathJoinedUSString() {
-    fail("Not yet implemented");
-  }
 
-  @Test
-  void testGetInstancePlatformIdsJoinedDot() {
-    fail("Not yet implemented");
-  }
 
-  @Test
-  void testGetPaths() {
-    fail("Not yet implemented");
   }
 
   @Test
   void testGetExtendedPath() {
-    fail("Not yet implemented");
-  }
-
-  @Test
-  void testGetProperties() {
-    fail("Not yet implemented");
-  }
-
-  @Test
-  void testCopy() {
-    fail("Not yet implemented");
-  }
-
-  @Test
-  void testToString() {
-    fail("Not yet implemented");
-  }
-
-  @Test
-  void testGetMSO() {
-    fail("Not yet implemented");
-  }
-
-  @Test
-  void testSetFinalDestination() {
-    fail("Not yet implemented");
+//    fail("Not yet implemented");
   }
 
   @Test
   void testGetFinalDestination() {
-    fail("Not yet implemented");
+    Path fd = tps.get();
+    assertFalse(ipl1.getFinalDestination().isPresent());
+    ipl1.setFinalDestination(fd);
+    Path q = ipl1.getFinalDestination().get();
+    assertEquals(fd, q);
   }
 
-  */
 }

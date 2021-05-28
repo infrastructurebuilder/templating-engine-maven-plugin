@@ -21,7 +21,6 @@ import static java.util.Objects.requireNonNull;
 import static org.infrastructurebuilder.templating.TemplatingEngine.EXECUTION_IDENTIFIER;
 import static org.infrastructurebuilder.templating.TemplatingEngine.mergeProperties;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -50,11 +49,11 @@ import org.json.JSONArray;
 
 public final class TemplatingUtils {
 
-  public final static Function<Map<String, String>, Properties> mapSS2Props = (mss) -> {
-    final Properties p = new Properties();
-    mss.entrySet().stream().forEach(e -> p.setProperty(e.getKey(), e.getValue()));
-    return p;
-  };
+//  public final static Function<Map<String, String>, Properties> mapSS2Props = (mss) -> {
+//    final Properties p = new Properties();
+//    mss.entrySet().stream().forEach(e -> p.setProperty(e.getKey(), e.getValue()));
+//    return p;
+//  };
 
   public final static Map<String, Object> extendWithAll(Map<String, JSONArray> intial, Map<String, JSONArray> extend) {
     final Map<String, JSONArray> map = new HashMap<>();
