@@ -32,8 +32,8 @@
   <name>${project.artifactId}</name>
   <properties>
     <templating.engine.version>0.9.7</templating.engine.version>
-    <test.coverage.percentage.required>39</test.coverage.percentage.required>
-    <jacoco.max.missed.classes>9</jacoco.max.missed.classes>
+    <velocity.templating.engine.version>0.9.7</velocity.templating.engine.version>
+    <test.coverage.percentage.required>90</test.coverage.percentage.required>
   </properties>
   <scm>
     <connection>scm:git:${git.url}</connection>
@@ -75,6 +75,11 @@
       <groupId>org.infrastructurebuilder.templating</groupId>
       <artifactId>templating-engine</artifactId>
       <version>${templating.engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.infrastructurebuilder.templating</groupId>
+      <artifactId>velocity-templating-engine</artifactId>
+      <version>${velocity.templating.engine.version}</version>
     </dependency>
     <dependency>
       <groupId>org.infrastructurebuilder.templating</groupId>

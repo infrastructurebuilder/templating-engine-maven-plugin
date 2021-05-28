@@ -16,12 +16,10 @@
 package org.infrastructurebuilder.templating.maven.internal;
 
 import static java.util.Objects.requireNonNull;
-import static org.infrastructurebuilder.templating.maven.internal.TemplatingUtils.mapSS2Props;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -56,7 +54,7 @@ public class TemplatingComponent implements LogEnabled {
   public List<String>             propertySupplierKeys;
   public Map<String, MSOSupplier> propertySupplierMap;
   public Path                     scanningRootSource;
-  public TemplatingEngineSupplier comp;
+  public TemplatingEngineSupplier templatingEngineSupplier;
   public Map<String, Object>      systemProperties;
 
   @Inject
@@ -66,7 +64,7 @@ public class TemplatingComponent implements LogEnabled {
   public void execute(@SuppressWarnings("rawtypes") Map pluginContext) throws MojoExecutionException {
     Path parentPath = useSourceParent ? scanningRootSource : scanningRootSource.getParent();
 
-    TemplatingUtils.localExecute(type, executionId, appendExecutionIdentifierToOutput, comp, properties,
+    TemplatingUtils.localExecute(type, executionId, appendExecutionIdentifierToOutput, templatingEngineSupplier, properties,
         propertiesAppended, fileToPropertiesArray, fileToPropertiesArrayAppended, files, parentPath, scanningRootSource,
         outputDirectory, systemProperties, env, requireNonNull(project, "maven project"), getLog(),
         propertySupplierKeys, propertySupplierMap);

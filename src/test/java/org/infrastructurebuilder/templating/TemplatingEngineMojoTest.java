@@ -93,7 +93,6 @@ public class TemplatingEngineMojoTest {
   boolean                                   includeSystemProperties = true;
   boolean                                   dumpContext;
   MavenProject                              project;
-  Log                                       log;
   SourcesTemplatingEngineMojo               sm;
   private TestsTemplatingEngineMojo         tm;
   private ResourcesTemplatingEngineMojo     rm;
@@ -231,6 +230,29 @@ public class TemplatingEngineMojoTest {
     sm.engineHint = engine;
     sm.source = templateSources;
     sm.dumpContext = true;
+    sm.fileToPropertiesArrayAppended.putAll(fake);
+    sm.execute();
+    // TODO Assert Something?
+  }
+  @Test // (expected = MojoExecutionException.class)
+  public void testLocalExecuteWSkip() throws MojoExecutionException, IOException {
+    executionIdentifier = "test1";
+    sm = (SourcesTemplatingEngineMojo) SU(new SourcesTemplatingEngineMojo(), executionIdentifier);
+    engine = executionIdentifier;
+    appendExecutionIdentifierToOutput = true;
+    final Path spr = testClasses.resolve(executionIdentifier);
+    Files.createDirectories(spr);
+    templateSources = spr.resolve("src").resolve("main").resolve("templates").toFile();
+    templateTestSources = spr.resolve("src").resolve("test").resolve("templates").toFile();
+    final Map<String, File> fake = new HashMap<>();
+    fake.put("someFake", new File(UUID.randomUUID().toString()));
+    final List<File> fakeFiles = Arrays.asList(new File(UUID.randomUUID().toString()));
+    sm.files.addAll(fakeFiles);
+    sm.appendExecutionIdentifierToOutput = false;
+    sm.engineHint = engine;
+    sm.source = templateSources;
+    sm.dumpContext = true;
+    sm.skip = true;
     sm.fileToPropertiesArrayAppended.putAll(fake);
     sm.execute();
     // TODO Assert Something?

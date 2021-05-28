@@ -16,11 +16,13 @@
 package org.infrastructurebuilder.templating.maven;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -29,7 +31,7 @@ import org.infrastructurebuilder.templating.TemplatingEngineException;
 public class PlatformInstance {
   public static final String  NON_NULL = " cannot be null";
 
-  private static final String ERR_STR  = "Only one of <properties>, <relPath>, or <path> is allowed";
+  private static final String ERR_STR  = "Only one of <properties>  or <path> is allowed";
 
   private String              id;
   private String              dirName;
@@ -37,18 +39,26 @@ public class PlatformInstance {
   private Properties          properties;
   private Platform            platform;
 
+  public PlatformInstance() {
+  }
+
+  PlatformInstance(String id, String dirname) {
+    this.id = id;
+    this.dirName = dirname;
+  }
+
   public String getDirName() {
-    return dirName == null ? getId() : requireNonNull(dirName, "dirName" + NON_NULL);
+    return ofNullable(dirName).orElse(getId());
   }
 
   public void setPath(String path) {
-    if (properties != null )
+    if (properties != null)
       throw new TemplatingEngineException(ERR_STR);
     this.path = path;
   }
 
   public void setProperties(Properties properties) {
-    if (path != null )
+    if (path != null)
       throw new TemplatingEngineException(ERR_STR);
     this.properties = properties;
   }
@@ -58,16 +68,15 @@ public class PlatformInstance {
   }
 
   public Optional<Path> getPath() {
-    return Optional.ofNullable(path).map(Path::of);
+    return ofNullable(path).map(Path::of);
   }
 
   public Properties getProperties() {
     if (properties == null) {
-
       // We must have a path or it's an error;
-      properties = new Properties();
-      Path r = Path.of(path);
-      try (BufferedReader i = Files.newBufferedReader(r)) {
+      try (BufferedReader i = Files.newBufferedReader(
+          getPath().orElseThrow(() -> new TemplatingEngineException("Must have properties or path")))) {
+        properties = new Properties();
         properties.load(i);
       } catch (IOException e) {
         throw new TemplatingEngineException(e);

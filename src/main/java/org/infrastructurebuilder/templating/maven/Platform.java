@@ -28,8 +28,15 @@ import java.util.List;
  *
  */
 public class Platform {
-  private String id;
+  private String                 id;
   private List<PlatformInstance> instances = new ArrayList<>();
+
+  public Platform() {
+  }
+
+  Platform(String id) {
+    this.id = id;
+  }
 
   public String getId() {
     return requireNonNull(id, "id must contain a value");
@@ -47,6 +54,5 @@ public class Platform {
   public void setInstances(List<PlatformInstance> instances) {
     instances.forEach(this::addInstance);
   }
-
 
 }

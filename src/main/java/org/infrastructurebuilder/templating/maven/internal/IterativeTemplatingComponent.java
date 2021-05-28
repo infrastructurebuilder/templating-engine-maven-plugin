@@ -106,7 +106,7 @@ public class IterativeTemplatingComponent extends TemplatingComponent {
       workingPropertySupplierMap.put(finalPropertiesId, () -> TemplatingUtils.toMSO.apply(finalOverrides));
 
       Path parentPath = useSourceParent ? scanningRootSource : scanningRootSource.getParent();
-      TemplatingUtils.localExecute(t, executionId, /* isAppendExecutionIdentifierToOutput() */ false, comp, properties,
+      TemplatingUtils.localExecute(t, executionId, /* isAppendExecutionIdentifierToOutput() */ false, templatingEngineSupplier, properties,
           propertiesAppended, fileToPropertiesArray, fileToPropertiesArrayAppended, files, parentPath,
           scanningRootSource, workingExtendedPath, systemProperties, env, requireNonNull(project, "maven project"),
           getLog(), workingPropertySupplierKeys, workingPropertySupplierMap);
