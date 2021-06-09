@@ -154,5 +154,12 @@ public class IterativeResourcesTemplatingEngineMojo extends AbstractTemplatingMo
   public TemplatingComponent getTemplatingComponent() {
     return icomp;
   }
+  @Override
+  public void setComp(TemplatingComponent comp) {
+//    this.icomp = (IterativeTemplatingComponent) comp;
+  }
 
+  public void setIcomp(IterativeTemplatingComponent icomp) {
+    this.icomp = icomp;
+  }
 }

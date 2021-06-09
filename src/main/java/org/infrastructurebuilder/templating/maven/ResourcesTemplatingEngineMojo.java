@@ -30,6 +30,19 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "generate-resources", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresProject = true)
 public class ResourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
 
+  @Component(hint = TemplatingComponent.TEMPLATING_COMPONENT)
+  public TemplatingComponent comp;
+
+  public void setComp(TemplatingComponent comp) {
+    this.comp = comp;
+  }
+
+  @Override
+  public TemplatingComponent getTemplatingComponent() {
+    // TODO Auto-generated method stub
+    return comp;
+  }
+
   /**
    * Source folder for templates
    *

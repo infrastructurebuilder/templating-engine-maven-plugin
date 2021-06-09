@@ -161,16 +161,10 @@ public abstract class AbstractTemplatingMojo extends AbstractMojo {
   @Parameter(required = false, defaultValue = "true")
   public boolean                               useSourceParent               = true;
 
-  @Component(hint = TemplatingComponent.TEMPLATING_COMPONENT)
-  public TemplatingComponent comp;
 
-  public TemplatingComponent getTemplatingComponent() {
-    return comp;
-  }
+  abstract public TemplatingComponent getTemplatingComponent();
+  abstract public void setComp(TemplatingComponent comp);
 
-  public void setComp(TemplatingComponent comp) {
-    this.comp = comp;
-  }
 
   /**
    * This map is automatically populated from the dependency tree via plexus

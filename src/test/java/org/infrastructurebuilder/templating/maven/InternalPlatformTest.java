@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating.maven.internal;
+package org.infrastructurebuilder.templating.maven;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.infrastructurebuilder.templating.MSOSupplier;
-import org.infrastructurebuilder.templating.maven.AbstractPlatformTest;
 import org.infrastructurebuilder.templating.maven.InternalPlatform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

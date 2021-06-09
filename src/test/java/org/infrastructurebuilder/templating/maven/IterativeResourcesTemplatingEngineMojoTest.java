@@ -90,12 +90,13 @@ class IterativeResourcesTemplatingEngineMojoTest extends AbstractPlatformTest {
     suppliers.put(VELOCITY, tes);
     m = new IterativeResourcesTemplatingEngineMojo();
     m.suppliers = suppliers;
+    m.setComp(null);
     comp = new IterativeTemplatingComponent();
     comp.enableLogging(logger);
     mojoDesc = new MojoDescriptor();
     mojo = new MojoExecution(mojoDesc, DEF);
     m.mojo = mojo;
-    m.setComp(comp);
+    m.setIcomp(comp);
     properties = new HashMap<>();
     properties.put("X", "Z");
     mso = new HashMap<>();
@@ -180,6 +181,8 @@ class IterativeResourcesTemplatingEngineMojoTest extends AbstractPlatformTest {
     irtpm.archiver = archiver;
     irtpm.project = project;
     irtpm.idMappers = List.of(cnm, c2);
+    Path ppr = tps.get();
+
     return irtpm;
   }
 
@@ -212,6 +215,10 @@ class IterativeResourcesTemplatingEngineMojoTest extends AbstractPlatformTest {
     m.setLog(null);
 
     m.platforms = platforms;
+    Path ppr = tps.get();
+    m.pathPropertiesRoot = ppr.toFile();
+    m.pathPropertiesName = "X";
+
 
     try {
       m.execute();

@@ -29,6 +29,18 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresProject = true)
 public class SourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
+  @Component(hint = TemplatingComponent.TEMPLATING_COMPONENT)
+  public TemplatingComponent comp;
+
+  public void setComp(TemplatingComponent comp) {
+    this.comp = comp;
+  }
+
+  @Override
+  public TemplatingComponent getTemplatingComponent() {
+    // TODO Auto-generated method stub
+    return comp;
+  }
 
   /**
    * Source folder for templates
