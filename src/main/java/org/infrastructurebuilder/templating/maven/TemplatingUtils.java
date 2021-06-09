@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating.maven.internal;
+package org.infrastructurebuilder.templating.maven;
 
 import static java.nio.file.Files.isReadable;
 import static java.nio.file.Files.isRegularFile;
@@ -43,7 +43,6 @@ import org.infrastructurebuilder.templating.MSOSupplier;
 import org.infrastructurebuilder.templating.TemplatingEngine;
 import org.infrastructurebuilder.templating.TemplatingEngineException;
 import org.infrastructurebuilder.templating.TemplatingEngineSupplier;
-import org.infrastructurebuilder.templating.maven.TemplateType;
 import org.infrastructurebuilder.util.core.IBUtils;
 import org.json.JSONArray;
 

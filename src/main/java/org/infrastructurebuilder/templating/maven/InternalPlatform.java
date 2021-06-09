@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating.maven.internal;
+package org.infrastructurebuilder.templating.maven;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
@@ -27,8 +27,6 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.infrastructurebuilder.templating.MSOSupplier;
-import org.infrastructurebuilder.templating.maven.Platform;
-import org.infrastructurebuilder.templating.maven.PlatformInstance;
 
 public class InternalPlatform {
   private List<String>           ids       = new ArrayList<>();

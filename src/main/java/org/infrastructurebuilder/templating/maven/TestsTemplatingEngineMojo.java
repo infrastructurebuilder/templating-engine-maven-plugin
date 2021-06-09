@@ -22,7 +22,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.infrastructurebuilder.templating.maven.internal.TemplatingComponent;
 
 @Mojo(name = "test-sources", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresProject = true)
 public class TestsTemplatingEngineMojo extends AbstractTemplatingMojo {

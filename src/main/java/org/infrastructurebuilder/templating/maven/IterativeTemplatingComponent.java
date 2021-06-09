@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating.maven.internal;
+package org.infrastructurebuilder.templating.maven;
 
 import static java.util.Objects.requireNonNull;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,8 +33,6 @@ import javax.inject.Named;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.infrastructurebuilder.templating.MSOSupplier;
 import org.infrastructurebuilder.templating.TemplatingEngineException;
-//import org.infrastructurebuilder.templating.maven.Platform;
-import org.infrastructurebuilder.templating.maven.TemplateType;
 
 @Named(IterativeTemplatingComponent.ITERATIVE_TEMPLATING_COMPONENT)
 public class IterativeTemplatingComponent extends TemplatingComponent {

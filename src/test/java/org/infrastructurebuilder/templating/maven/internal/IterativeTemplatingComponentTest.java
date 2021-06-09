@@ -23,6 +23,7 @@ import java.util.HashMap;
 
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.infrastructurebuilder.templating.maven.IterativeTemplatingComponent;
 import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;

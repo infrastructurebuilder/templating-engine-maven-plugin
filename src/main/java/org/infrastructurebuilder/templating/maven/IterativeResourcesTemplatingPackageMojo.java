@@ -19,7 +19,7 @@ import static org.apache.maven.plugins.annotations.InstantiationStrategy.PER_LOO
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 import static org.infrastructurebuilder.templating.TemplatingEngineException.et;
-import static org.infrastructurebuilder.templating.maven.internal.IterativeTemplatingComponent.ITERATED_RESOURCES;
+import static org.infrastructurebuilder.templating.maven.IterativeTemplatingComponent.ITERATED_RESOURCES;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -40,7 +40,6 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import org.infrastructurebuilder.templating.TemplatingEngineException;
-import org.infrastructurebuilder.templating.maven.internal.InternalPlatform;
 
 @Mojo(name = "attach", requiresProject = true, threadSafe = true, instantiationStrategy = PER_LOOKUP, defaultPhase = PACKAGE, requiresDependencyResolution = RUNTIME)
 public final class IterativeResourcesTemplatingPackageMojo extends AbstractMojo {

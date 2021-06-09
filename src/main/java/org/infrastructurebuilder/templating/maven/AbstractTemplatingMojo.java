@@ -38,8 +38,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.templating.MSOSupplier;
 import org.infrastructurebuilder.templating.TemplatingEngineSupplier;
-import org.infrastructurebuilder.templating.maven.internal.TemplatingComponent;
-import org.infrastructurebuilder.templating.maven.internal.TemplatingUtils;
 
 public abstract class AbstractTemplatingMojo extends AbstractMojo {
 

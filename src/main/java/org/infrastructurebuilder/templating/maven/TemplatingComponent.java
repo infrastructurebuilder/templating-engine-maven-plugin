@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infrastructurebuilder.templating.maven.internal;
+package org.infrastructurebuilder.templating.maven;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,7 +31,6 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.infrastructurebuilder.templating.MSOSupplier;
 import org.infrastructurebuilder.templating.TemplatingEngineSupplier;
-import org.infrastructurebuilder.templating.maven.TemplateType;
 
 @Named(TemplatingComponent.TEMPLATING_COMPONENT)
 public class TemplatingComponent implements LogEnabled {

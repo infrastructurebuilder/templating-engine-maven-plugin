@@ -31,9 +31,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.infrastructurebuilder.templating.maven.internal.InternalPlatform;
-import org.infrastructurebuilder.templating.maven.internal.IterativeTemplatingComponent;
-import org.infrastructurebuilder.templating.maven.internal.TemplatingComponent;
 
 @Mojo(name = "iterate", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true)
 public class IterativeResourcesTemplatingEngineMojo extends AbstractTemplatingMojo {
