@@ -70,7 +70,7 @@ public class IterativeResourcesTemplatingEngineMojo extends AbstractTemplatingMo
   @Parameter(required = false, defaultValue = "${project.build.directory}/generated-resources/iterated-templating-resources")
   public File                         outputDirectory;
 
-  @Component
+  @Component(hint = IterativeTemplatingComponent.ITERATIVE_TEMPLATING_COMPONENT)
   public IterativeTemplatingComponent icomp;
 
   @Override
@@ -150,10 +150,6 @@ public class IterativeResourcesTemplatingEngineMojo extends AbstractTemplatingMo
     return TemplateType.ITERATIVE_RESOURCE;
   }
 
-  @Override
-  public void setComp(TemplatingComponent comp) {
-    this.icomp = (IterativeTemplatingComponent) comp;
-  }
   @Override
   public TemplatingComponent getTemplatingComponent() {
     return icomp;
